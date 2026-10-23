@@ -401,10 +401,12 @@ textarea:focus-visible { outline: 2px solid var(--b); outline-offset: 1px; }
     <div class="lb-up">
       <h3>내 점수 올리기</h3>
       <div class="row">
-        <label for="lb-nick">닉네임 (선택)</label>
-        <input id="lb-nick" type="text" maxlength="20" autocomplete="off" spellcheck="false" placeholder="실명은 쓰지 마세요">
+        <label for="lb-nick">닉네임</label>
+        <input id="lb-nick" type="text" maxlength="20" autocomplete="off" spellcheck="false" placeholder="비워 두면 익명으로 올라가요">
+        <button type="button" id="lb-reroll">다시 뽑기</button>
         <button type="button" class="primary" id="lb-upload" disabled>점수 올리기</button>
       </div>
+      <p class="hint">닉네임은 자동으로 지어 드렸어요. 마음에 안 들면 다시 뽑거나 직접 바꿔도 돼요. 실명은 쓰지 마세요.</p>
       <p class="hint">올라가는 정보: 닉네임, 기기 종류, 운영체제, CPU·그래픽 이름, 스레드 수, 메모리, 점수. 이름이나 위치는 보내지 않아요.</p>
       <p class="hint need" id="lb-gpu-note" hidden>외장 그래픽을 고르지 않아서 그래픽 정보는 빼고 올려요. 외장 그래픽이 있으면 위의 "외장 그래픽" 칸에서 먼저 골라 주세요.</p>
       <p class="status" id="lb-status" aria-live="polite"></p>
@@ -1302,6 +1304,21 @@ function lbRender() {
       : lbUploaded() ? '이 기기는 마지막으로 올린 점수만 순위에 쓰여요.' : '';
   }
 }
+// 자동 닉네임: "말랑한 수달"처럼 꾸미는 말 + 동물. 기기마다 한 번 지어서 저장해 둬요
+const NICK_ADJ = ['말랑한', '용감한', '느긋한', '반짝이는', '배고픈', '졸린', '수줍은', '씩씩한', '엉뚱한', '날쌘', '뜨거운', '시원한', '조용한', '신나는', '귀여운', '똑똑한', '부지런한', '심심한', '포근한', '당당한', '재빠른', '우아한', '명랑한', '꼼꼼한', '든든한', '상냥한', '꿋꿋한', '쌩쌩한', '야무진', '느릿한'];
+const NICK_NOUN = ['수달', '다람쥐', '펭귄', '고양이', '판다', '너구리', '부엉이', '햄스터', '알파카', '고슴도치', '여우', '코알라', '돌고래', '거북이', '참새', '토끼', '사막여우', '라쿤', '물개', '치타', '해달', '오리', '두더지', '미어캣', '카피바라', '나무늘보', '앵무새', '고래', '강아지', '병아리'];
+const pick = list => list[Math.floor(Math.random() * list.length)];
+const randomNick = () => `${pick(NICK_ADJ)} ${pick(NICK_NOUN)}`;
+function savedNick() {
+  try {
+    const v = localStorage.getItem('spec-compare-nick');
+    if (v !== null) return v;
+    const n = randomNick();
+    localStorage.setItem('spec-compare-nick', n);
+    return n;
+  } catch (e) { return randomNick(); }
+}
+function saveNick(v) { try { localStorage.setItem('spec-compare-nick', v); } catch (e) {} }
 function lbUploaded() { try { return !!localStorage.getItem('spec-compare-uploaded'); } catch (e) { return false; } }
 async function uploadScore(nickname) {
   const b = buildB();
@@ -1331,6 +1348,15 @@ async function lbInit() {
   $('lb').hidden = false;
   lb.kind = lbGroup();
   try { lb.myKey = await deviceKey(); } catch (e) {}
+  const nick = $('lb-nick');
+  nick.value = savedNick();
+  nick.addEventListener('input', () => saveNick(nick.value.trim()));
+  $('lb-reroll').addEventListener('click', () => {
+    let n = randomNick();
+    while (n === nick.value) n = randomNick();
+    nick.value = n;
+    saveNick(n);
+  });
   document.querySelectorAll('.lb-filters button').forEach(el => el.addEventListener('click', () => {
     if (lb.kind === el.dataset.kind) return;
     lb.kind = el.dataset.kind;
