@@ -4,13 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
-<title>노트북 사양 비교</title>
+<title>내 기기 측정하고 다른 사람들과 순위 비교</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;700&display=swap">
 <style>
-/* Layout: 한 열 작업 페이지. 두 기기 카드 → 성능 측정 → 한눈에 보기 → 항목별 비교 → 용도별 정리 → (선택) 정확한 사양 넣기. 파랑 = 기준 노트북, 주황 = 지금 이 노트북 */
+/* Layout: 한 열 작업 페이지. 두 기기 카드 → 성능 측정 → 한눈에 보기 → 항목별 비교 → 용도별 정리 → (선택) 정확한 사양 넣기. 파랑 = 기준 노트북, 주황 = 지금 이 기기 */
 :root {
   --bg: #f3f5f8;
   --surface: #ffffff;
@@ -340,26 +340,25 @@ textarea:focus-visible { outline: 2px solid var(--b); outline-offset: 1px; }
 <div class="wrap">
   <header>
     <span class="eyebrow">Spec check · 자동 측정</span>
-    <h1>노트북 사양 비교</h1>
-    <p class="lede">이 페이지를 연 노트북, 휴대폰, 태블릿을 자동으로 확인하고 측정해서, 저장해 둔 기준 노트북과 비교해요. 충전기를 꽂고 다른 프로그램이나 앱을 닫아 두면 더 정확해요.</p>
+    <h1>내 기기 측정하고 다른 사람들과 순위 비교</h1>
+    <p class="lede">이 페이지를 연 노트북, 휴대폰, 태블릿의 성능을 자동으로 재고, 다른 사람들이 올린 기록 사이에서 몇 위인지 보여줘요. 점수는 기준 노트북을 1,000점으로 놓고 계산해요. 충전기를 꽂고 다른 프로그램이나 앱을 닫아 두면 더 정확해요.</p>
   </header>
 
-  <div class="banner" id="same-banner" hidden>지금 연 노트북이 저장된 기준 노트북으로 보여요. 개인 노트북에서 이 페이지를 열면 그 노트북이 자동으로 측정돼요.</div>
+  <div class="banner" id="same-banner" hidden>지금 연 노트북이 기준 노트북과 같은 사양으로 보여요. 다른 기기에서 이 페이지를 열면 그 기기가 자동으로 측정돼요.</div>
 
   <div class="devices">
     <article class="device a">
       <div class="device-top">
         <span class="device-role">기준 노트북</span>
-        <span class="tag">저장된 사양</span>
+        <span class="tag">1,000점</span>
       </div>
       <div class="device-name">기준 노트북 (1,000점)</div>
       <dl class="specs">
         <dt>CPU</dt><dd>Intel Core 5 210H · 8코어 12스레드</dd>
-        <dt>메모리</dt><dd>32GB DDR5 5200MHz · 16GB × 2</dd>
+        <dt>메모리</dt><dd>32GB DDR5</dd>
         <dt>그래픽</dt><dd>Intel Graphics (내장, 48EU)</dd>
-        <dt>저장장치</dt><dd>NVMe SSD 1TB</dd>
         <dt>화면</dt><dd>1920×1080 · 60Hz</dd>
-        <dt>운영체제</dt><dd>Windows 11 Pro</dd>
+        <dt>운영체제</dt><dd>Windows 11</dd>
       </dl>
     </article>
     <article class="device b">
@@ -388,15 +387,6 @@ textarea:focus-visible { outline: 2px solid var(--b); outline-offset: 1px; }
     <ul class="note-list" id="bench-notes"></ul>
   </section>
 
-  <section>
-    <div class="sec-head">
-      <h2 id="can-title">이 기기로 할 수 있는 것</h2>
-      <p id="can-summary-text">측정이 끝나면 채워져요.</p>
-    </div>
-    <div class="pills" id="can-summary"></div>
-    <ul class="can-list" id="can-list"></ul>
-  </section>
-
   <section id="lb" hidden>
     <div class="sec-head">
       <h2>다른 사람들과 비교</h2>
@@ -419,6 +409,15 @@ textarea:focus-visible { outline: 2px solid var(--b); outline-offset: 1px; }
       <p class="hint need" id="lb-gpu-note" hidden>외장 그래픽을 고르지 않아서 그래픽 정보는 빼고 올려요. 외장 그래픽이 있으면 위의 "외장 그래픽" 칸에서 먼저 골라 주세요.</p>
       <p class="status" id="lb-status" aria-live="polite"></p>
     </div>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <h2 id="can-title">이 기기로 할 수 있는 것</h2>
+      <p id="can-summary-text">측정이 끝나면 채워져요.</p>
+    </div>
+    <div class="pills" id="can-summary"></div>
+    <ul class="can-list" id="can-list"></ul>
   </section>
 
   <section>
@@ -459,7 +458,7 @@ textarea:focus-visible { outline: 2px solid var(--b); outline-offset: 1px; }
   </details>
 
   <div class="foot">
-    <p>CPU 점수는 이 페이지가 브라우저에서 같은 계산 작업을 돌려서 잰 값이에요. 기준 노트북을 1,000점으로 놓고, 한 스레드로만 돌린 값(싱글코어)과 모든 스레드로 동시에 돌린 값(멀티코어)을 비교해요.</p>
+    <p>CPU 점수는 이 페이지가 브라우저에서 같은 계산 작업을 돌려서 잰 값이에요. 기준 노트북(Intel Core 5 210H)을 1,000점으로 놓고, 한 스레드로만 돌린 값(싱글코어)과 모든 스레드로 동시에 돌린 값(멀티코어)을 비교해요.</p>
     <p>그래픽 점수는 감지되거나 고른 그래픽을 3DMark Time Spy 그래픽 점수로 알려진 값에 대응시킨 추정치예요. 휴대폰 그래픽은 기준이 달라서 점수로 비교하지 않아요.</p>
     <p>Chrome이나 Edge에서 여는 걸 권해요. Firefox는 그래픽 이름을 감춰요. iPhone과 iPad의 Safari는 브라우저 엔진이 달라서 CPU 점수가 20% 정도 다르게 나올 수 있어요.</p>
   </div>
@@ -724,7 +723,7 @@ async function detect() {
   if (!d.model) d.model = /iPhone/.test(ua) ? 'iPhone' : d.kind === 'tablet' && /Macintosh|iPad/.test(ua) ? 'iPad' : '';
   return d;
 }
-const is기준 노트북 = d => d && d.threads === A.threads && /Intel/i.test(d.rendererName) && !/NVIDIA|Radeon/i.test(d.rendererName) && d.screen && d.screen.w === 1920 && d.screen.h === 1080;
+const isReference = d => d && d.threads === A.threads && /Intel/i.test(d.rendererName) && !/NVIDIA|Radeon/i.test(d.rendererName) && d.screen && d.screen.w === 1920 && d.screen.h === 1080;
 
 // ---------- CPU 측정 ----------
 const WORKER_SRC = `
@@ -1021,7 +1020,7 @@ function renderDeviceB(b) {
 function render() {
   const a = aObj(), b = buildB();
   renderDeviceB(b);
-  $('same-banner').hidden = !is기준 노트북(state.det) || !!state.exact;
+  $('same-banner').hidden = !isReference(state.det) || !!state.exact;
 
   const mobile = isMobile();
   const benchNote = b.measured ? '' : b.cpu && b.cpu.multi ? '일반적인 값' : '';
@@ -1203,7 +1202,7 @@ $('copy-btn').addEventListener('click', () => {
 });
 
 // ---------- 다른 사람들과 비교 (Supabase 점수판) ----------
-const LB_REF_KEY = '11e594f481958c10e3015d0bf0447a22f068a8a647f475df15ce2c7ab4b8f3f1'; // 기준 기기(기준 노트북) device_key
+const LB_REF_KEY = '11e594f481958c10e3015d0bf0447a22f068a8a647f475df15ce2c7ab4b8f3f1'; // 기준 노트북 device_key
 const lb = { kind: 'all', myKey: '', rows: null, stats: null, failed: false, busy: false };
 function deviceId() {
   try {
@@ -1377,10 +1376,10 @@ async function lbInit() {
   } else if (!state.gpu && state.det.hp && ARCH_MAP[state.det.hp.arch] && state.det.hp.vendor === 'nvidia') {
     state.gpu = ARCH_MAP[state.det.hp.arch][0];
   }
-  if (is기준 노트북(state.det) && !state.gpu) state.gpu = 'none';
+  if (isReference(state.det) && !state.gpu) state.gpu = 'none';
   // 개인 노트북(LOQ)은 16GB라고 알려줘서 기본값으로 둬요. 휴대폰은 브라우저가 8GB 미만일 때만 정확한 값을 알려줘요
   if (!state.ram && !state.exact) {
-    if (is기준 노트북(state.det)) state.ram = '32';
+    if (isReference(state.det)) state.ram = '32';
     else if (state.det.kind !== 'laptop') state.ram = state.det.memHint && state.det.memHint < 8 ? String(state.det.memHint) : '';
     else state.ram = '16';
   }
