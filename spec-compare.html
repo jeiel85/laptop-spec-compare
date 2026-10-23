@@ -131,6 +131,8 @@ select {
 select:focus-visible { outline: 2px solid var(--b); outline-offset: 1px; }
 .hint { font-size: 12.5px; color: var(--muted); }
 .hint.ok { color: var(--ok); }
+.hint.need { color: var(--b-ink); font-weight: 500; }
+.field.need select { border-color: var(--b); box-shadow: 0 0 0 1px var(--b); }
 
 /* 성능 측정 */
 .bench {
@@ -407,6 +409,7 @@ textarea:focus-visible { outline: 2px solid var(--b); outline-offset: 1px; }
         <button type="button" class="primary" id="lb-upload" disabled>점수 올리기</button>
       </div>
       <p class="hint">올라가는 정보: 닉네임, 기기 종류, 운영체제, CPU·그래픽 이름, 스레드 수, 메모리, 점수. 이름이나 위치는 보내지 않아요.</p>
+      <p class="hint need" id="lb-gpu-note" hidden>외장 그래픽을 고르지 않아서 그래픽 정보는 빼고 올려요. 외장 그래픽이 있으면 위의 "외장 그래픽" 칸에서 먼저 골라 주세요.</p>
       <p class="status" id="lb-status" aria-live="polite"></p>
     </div>
   </section>
@@ -853,7 +856,7 @@ function game(x, okAt, mehAt, notes) {
   if (!x.gpu) return S('unk', '그래픽을 확인하지 못했어요. 외장 그래픽을 골라 주세요.');
   return x.gpu >= okAt ? S('ok', notes[0]) : x.gpu >= mehAt ? S('meh', notes[1]) : S('no', notes[2]);
 }
-// [항목, 짧은 이름, 판단]  x: { mobile, single, multi, gpu, nvidia, vram, ram }  CPU 점수는 기준 노트북 = 1000
+// [항목, 짧은 이름, 판단, 그래픽에 따라 갈리는지]  x: { mobile, single, multi, gpu, nvidia, vram, ram }  CPU 점수는 기준 노트북 = 1000
 const CAN_DO = [
   ['웹 서핑 · 문서 · 화상회의', '웹·문서', x => {
     if (x.mobile) return S('ok', '웹, 문서 보기, 영상 통화 모두 쾌적해요.');
@@ -887,17 +890,17 @@ const CAN_DO = [
     if ((x.nvidia || x.gpu >= 2400) && x.multi >= 800) return S('ok', '컷 편집, 자막, 효과까지 무난해요.');
     if (x.multi >= 600) return S('meh', '컷 편집은 되지만, 효과를 많이 넣으면 미리보기가 끊겨요.');
     return S('no', '편집과 내보내기가 많이 느려요.');
-  }],
+  }, true],
   ['4K 영상 편집', '4K 영상 편집', x => {
     if (x.mobile) return S('no', '휴대폰으로 4K 편집은 어려워요.');
     if (!x.multi) return WAIT;
     if (x.nvidia && x.gpu >= 4500 && x.multi >= 1000 && x.ram >= 16) return S('ok', 'NVIDIA 그래픽 덕분에 4K도 할 만해요.');
     if (x.nvidia || (x.gpu >= 2400 && x.multi >= 1000)) return S('meh', '저화질 편집본(프록시)을 쓰면 할 수 있어요.');
     return S('no', '외장 그래픽이 없어서 많이 버거워요.');
-  }],
-  ['가벼운 게임 (롤, 메이플, 발로란트)', '가벼운 게임', x => game(x, 1600, 800, ['FHD 중간~높음 옵션으로 쾌적해요.', '낮은 옵션이면 할 만해요.', '많이 끊겨요.'])],
-  ['중간 게임 (배그, 오버워치)', '배그·오버워치', x => game(x, 4000, 2400, ['FHD 중간 이상 옵션으로 할 수 있어요.', '낮은 옵션이면 할 수 있어요.', '사실상 어려워요.'])],
-  ['최신 고사양 게임', '최신 고사양 게임', x => game(x, 9000, 4500, ['FHD 높음 옵션도 할 만해요.', '중간~낮음 옵션으로 할 수 있어요.', '사실상 어려워요.'])],
+  }, true],
+  ['가벼운 게임 (롤, 메이플, 발로란트)', '가벼운 게임', x => game(x, 1600, 800, ['FHD 중간~높음 옵션으로 쾌적해요.', '낮은 옵션이면 할 만해요.', '많이 끊겨요.']), true],
+  ['중간 게임 (배그, 오버워치)', '배그·오버워치', x => game(x, 4000, 2400, ['FHD 중간 이상 옵션으로 할 수 있어요.', '낮은 옵션이면 할 수 있어요.', '사실상 어려워요.']), true],
+  ['최신 고사양 게임', '최신 고사양 게임', x => game(x, 9000, 4500, ['FHD 높음 옵션도 할 만해요.', '중간~낮음 옵션으로 할 수 있어요.', '사실상 어려워요.']), true],
   ['AI 채팅 모델 직접 돌리기', '로컬 AI', x => {
     if (x.mobile) return S('no', '휴대폰 브라우저로는 어려워요.');
     if (x.nvidia && x.vram >= 6) return S('ok', `그래픽 메모리 ${x.vram}GB로 7~8B 모델이 빠르게 돌아가요.`);
@@ -905,13 +908,13 @@ const CAN_DO = [
     if (!x.ram) return S('unk', '메모리 용량을 골라 주세요.');
     if (x.ram >= 16) return S('meh', 'CPU로만 돌아가서 느려요. 답이 천천히 나와요.');
     return S('no', '메모리가 작아서 어려워요.');
-  }],
+  }, true],
   ['이미지 생성 AI (Stable Diffusion)', '이미지 생성 AI', x => {
     if (x.mobile) return S('no', '휴대폰 브라우저로는 어려워요.');
     if (x.nvidia && x.vram >= 8) return S('ok', '이미지 한 장이 몇 초~십여 초면 나와요.');
     if (x.nvidia) return S('meh', `그래픽 메모리(${x.vram}GB)가 작아서 작은 해상도로만 돌아가요.`);
-    return S('no', 'NVIDIA 그래픽이 없어서 한 장에 몇 분씩 걸려요.');
-  }],
+    return S('no', 'NVIDIA 그래픽이 없으면 한 장에 몇 분씩 걸려요.');
+  }, true],
 ];
 
 function gameLevel(score) {
@@ -948,8 +951,10 @@ function buildB() {
   if (bench && base) { single = bench.single / base.single * 1000; multi = bench.multi / base.multi * 1000; measured = true; }
   else if (cpu) { single = cpu.single / 1700 * 1000; multi = cpu.multi / 10500 * 1000; }
   const ramGB = ex ? num(ex.ramGB) : (+state.ram || 0);
+  // 하이브리드 노트북은 브라우저가 내장 그래픽만 보여줘서, 외장 그래픽이 없다고 단정할 수 없어요
+  const dgpuUnknown = det.kind === 'laptop' && !(gpu && gpu.kind === '외장') && state.gpu !== 'none';
   return {
-    cpuLabel, cpu, single, multi, measured,
+    cpuLabel, cpu, single, multi, measured, dgpuUnknown,
     threads: ex ? num(ex.threads) : det.threads,
     gpu, names,
     gpuName: det.rendererName ? cleanGpu(det.rendererName) : (cpu && cpu.igpu) || '',
@@ -1015,7 +1020,9 @@ function render() {
   const benchNote = b.measured ? '' : b.cpu && b.cpu.multi ? '일반적인 값' : '';
   const vSingle = compare(a.single, b.single, 0.1);
   const vMulti = compare(a.multi, b.multi);
-  const vGpu = mobile && !(b.gpu && b.gpu.score) ? { who: 'unk', text: '비교 안 함', detail: '', ratio: 1 } : compare(a.gpu.score, b.gpu && b.gpu.score);
+  const vGpu = mobile && !(b.gpu && b.gpu.score) ? { who: 'unk', text: '비교 안 함', detail: '', ratio: 1 }
+    : b.dgpuUnknown ? { who: 'unk', text: '외장 그래픽을 골라 주세요', detail: '', ratio: 1 }
+    : compare(a.gpu.score, b.gpu && b.gpu.score);
   const vRam = compare(a.ramGB, b.ramGB, 0.2);
   let vDisp;
   if (!b.display || !b.display.w) vDisp = { who: 'unk', text: '판단 어려움', detail: '' };
@@ -1031,7 +1038,7 @@ function render() {
 
   $('glance').innerHTML = [
     ['CPU (멀티코어)', vMulti, vMulti.detail || (b.multi ? '' : '측정 중')],
-    ['그래픽 (게임)', vGpu, vGpu.detail || ''],
+    ['그래픽 (게임)', vGpu, vGpu.detail || (b.dgpuUnknown ? '지금은 내장 그래픽만 보여요' : '')],
     ['메모리', vRam, b.ramGB ? `${a.ramGB}GB vs ${b.ramGB}GB` : '용량을 골라 주세요'],
     ['화면', vDisp, b.display && b.display.hz ? `${a.display.hz}Hz vs ${b.display.hz}Hz` : ''],
   ].map(([k, v, d]) => `<div class="glance-item"><span class="k">${k}</span>${chip(v)}<span class="d">${esc(d)}</span></div>`).join('');
@@ -1054,13 +1061,17 @@ function render() {
   // 할 수 있는 것 / 어려운 것
   const xa = { mobile: false, single: a.single, multi: a.multi, gpu: a.gpu.score, nvidia: false, vram: 0, ram: a.ramGB };
   const xb = { mobile, single: b.single, multi: b.multi, gpu: b.gpu ? b.gpu.score : 0, nvidia: b.nvidia, vram: b.gpu ? b.gpu.vram : 0, ram: b.ramGB };
-  const rows = CAN_DO.map(([t, short, f]) => ({ t, short, b: f(xb), a: f(xa) }));
+  // 외장 그래픽을 모르면, 그래픽에 따라 갈리는 항목은 내장 그래픽 기준 결과를 참고로만 보여줘요
+  const gate = r => !b.dgpuUnknown || ['ok', 'unk', 'na'].includes(r.s) ? r
+    : S('unk', `내장 그래픽만 있을 때: ${STATUS[r.s].label}. 외장 그래픽이 있으면 위에서 골라 주세요.`);
+  const rows = CAN_DO.map(([t, short, f, byGpu]) => ({ t, short, b: byGpu ? gate(f(xb)) : f(xb), a: f(xa) }));
   const cnt = s => rows.filter(r => r.b.s === s).length;
   $('can-title').textContent = `${LB}${ro(LB)} 할 수 있는 것`;
   const hard = rows.filter(r => r.b.s === 'no').map(r => r.short);
   $('can-summary-text').textContent = !b.multi ? '측정이 끝나면 모두 채워져요. 오른쪽은 기준 노트북 결과예요.'
     : hard.length ? `어려운 것: ${hard.join(', ')}. 오른쪽은 기준 노트북 결과예요.`
     : '어려운 작업이 없어요. 오른쪽은 기준 노트북 결과예요.';
+  if (b.multi && b.dgpuUnknown) $('can-summary-text').textContent += ' 그래픽에 따라 갈리는 항목은 외장 그래픽을 고르면 채워져요.';
   $('can-summary').innerHTML = ['ok', 'meh', 'no', 'unk'].filter(s => cnt(s)).map(s => `<span class="pill ${s}">${STATUS[s].short} ${cnt(s)}</span>`).join('');
   $('can-list').innerHTML = rows.map(r => `
     <li class="can ${r.b.s}">
@@ -1113,21 +1124,23 @@ function fillSelects() {
   const det = state.det;
   const arch = det && det.hp && det.hp.vendor === 'nvidia' ? det.hp.arch : '';
   const cands = ARCH_MAP[arch] || LOQ_GPUS;
-  gpuSel.innerHTML = '<option value="">없음 / 모름</option>' + `<optgroup label="${arch && ARCH_MAP[arch] ? 'NVIDIA ' + ARCH_NAME[arch] : 'NVIDIA (레노버 LOQ)'}">` + cands.map(g => `<option value="${g}">${g}${g.includes('6GB') ? '' : ''}</option>`).join('') + '</optgroup>';
-  if (state.gpu && !cands.includes(state.gpu)) gpuSel.insertAdjacentHTML('beforeend', `<option value="${esc(state.gpu)}">${esc(state.gpu)}</option>`);
+  gpuSel.innerHTML = '<option value="">모름</option><option value="none">없음 (내장 그래픽만)</option>' + `<optgroup label="${arch && ARCH_MAP[arch] ? 'NVIDIA ' + ARCH_NAME[arch] : 'NVIDIA (레노버 LOQ)'}">` + cands.map(g => `<option value="${g}">${g}${g.includes('6GB') ? '' : ''}</option>`).join('') + '</optgroup>';
+  if (state.gpu && state.gpu !== 'none' && !cands.includes(state.gpu)) gpuSel.insertAdjacentHTML('beforeend', `<option value="${esc(state.gpu)}">${esc(state.gpu)}</option>`);
   gpuSel.value = state.gpu;
   gpuSel.disabled = !!state.gpuAuto;
 
   const hint = $('input-hint');
+  $('gpu-field').classList.toggle('need', !mobile && !state.gpu);
   if (state.exact) { hint.className = 'hint ok'; hint.textContent = '붙여넣은 사양으로 채웠어요.'; }
   else if (mobile) { hint.className = 'hint'; hint.textContent = '브라우저는 칩 이름과 메모리 용량을 알려주지 않아요. 휴대폰 설정의 휴대전화 정보(iPhone은 일반 → 정보)에서 확인하고 골라 주세요.'; }
   else if (state.gpuAuto) { hint.className = 'hint'; hint.textContent = `외장 그래픽(${state.gpuAuto})은 자동으로 감지했어요. CPU 모델과 메모리는 브라우저가 알려주지 않아서 직접 골라 주세요.`; }
   else if (arch) { hint.className = 'hint'; hint.textContent = `NVIDIA ${ARCH_NAME[arch] || '외장 그래픽'}까지 감지했어요. 정확한 모델을 골라 주세요. CPU 모델과 메모리도 직접 골라 주세요.`; }
-  else { hint.className = 'hint'; hint.textContent = '브라우저는 CPU 모델명과 메모리 용량을 알려주지 않아요. 알고 있으면 골라 주세요. 레노버 LOQ는 모두 NVIDIA 외장 그래픽이 있어요.'; }
+  else if (!state.gpu) { hint.className = 'hint need'; hint.textContent = '외장 그래픽을 찾지 못했어요. 노트북이 지금 내장 그래픽만 쓰고 있으면 브라우저는 외장 그래픽을 알 수 없어요. 외장 그래픽이 있으면 골라 주세요(레노버 LOQ는 모두 있어요). 없으면 "없음"을 고르세요. CPU 모델과 메모리도 직접 골라 주세요.'; }
+  else { hint.className = 'hint'; hint.textContent = '브라우저는 CPU 모델명과 메모리 용량을 알려주지 않아요. 알고 있으면 골라 주세요.'; }
 }
 $('cpu-pick').addEventListener('change', e => { state.cpu = e.target.value; save(); render(); });
 $('ram-pick').addEventListener('change', e => { state.ram = e.target.value; save(); render(); });
-$('gpu-pick').addEventListener('change', e => { state.gpu = e.target.value; save(); render(); });
+$('gpu-pick').addEventListener('change', e => { state.gpu = e.target.value; save(); fillSelects(); render(); lbRender(); });
 $('rerun').addEventListener('click', runBench);
 
 // ---------- 정확한 사양 붙여넣기 ----------
@@ -1145,7 +1158,8 @@ function applyExact(d) {
   state.cpu = cleanCpu(d.cpu);
   state.ram = String(Math.round(num(d.ramGB)) || '');
   const dg = arr(d.gpu).map(String).find(n => findDgpu(n));
-  if (dg) { state.gpu = cleanGpu(dg).replace(/^GeForce\s+/i, '').replace(/\s+Laptop$/i, ''); }
+  // 붙여넣은 사양은 그래픽 목록 전체가 들어 있어서, 외장 그래픽이 없으면 정말 없는 거예요
+  state.gpu = dg ? cleanGpu(dg).replace(/^GeForce\s+/i, '').replace(/\s+Laptop$/i, '') : 'none';
   save();
   fillSelects();
   render();
@@ -1274,6 +1288,7 @@ function lbRender() {
   }
   const btn = $('lb-upload');
   btn.disabled = lb.busy || running || !b.measured;
+  $('lb-gpu-note').hidden = !b.dgpuUnknown;
   const st = $('lb-status');
   if (!lb.busy && !st.dataset.sticky) {
     st.className = 'status';
@@ -1284,7 +1299,8 @@ function lbRender() {
 function lbUploaded() { try { return !!localStorage.getItem('spec-compare-uploaded'); } catch (e) { return false; } }
 async function uploadScore(nickname) {
   const b = buildB();
-  const gpu = b.gpu ? b.gpu.label : (b.gpuName || '');
+  // 외장 그래픽을 모르면 내장 그래픽을 이 기기의 그래픽으로 올리지 않아요
+  const gpu = b.dgpuUnknown ? '' : b.gpu ? b.gpu.label : (b.gpuName || '');
   const row = {
     device_id: deviceId(),
     nickname: nickname.trim().slice(0, 20) || null,
@@ -1296,7 +1312,7 @@ async function uploadScore(nickname) {
     ram_gb: b.ramGB || null,
     single_pts: Math.round(b.single),
     multi_pts: Math.round(b.multi),
-    gpu_pts: b.gpu ? b.gpu.score : null,
+    gpu_pts: b.gpu && !b.dgpuUnknown ? b.gpu.score : null,
     single_raw: state.bench.single,
     multi_raw: state.bench.multi,
     bench_version: BENCH_VERSION,
@@ -1354,6 +1370,7 @@ async function lbInit() {
   } else if (!state.gpu && state.det.hp && ARCH_MAP[state.det.hp.arch] && state.det.hp.vendor === 'nvidia') {
     state.gpu = ARCH_MAP[state.det.hp.arch][0];
   }
+  if (is기준 노트북(state.det) && !state.gpu) state.gpu = 'none';
   // 개인 노트북(LOQ)은 16GB라고 알려줘서 기본값으로 둬요. 휴대폰은 브라우저가 8GB 미만일 때만 정확한 값을 알려줘요
   if (!state.ram && !state.exact) {
     if (is기준 노트북(state.det)) state.ram = '32';
