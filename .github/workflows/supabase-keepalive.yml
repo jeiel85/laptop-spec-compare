@@ -1,0 +1,19 @@
+name: Supabase keep-alive
+
+on:
+  schedule:
+    - cron: '0 0 */3 * *'   # 3일마다 UTC 0시 (한국 시간 9시)
+  workflow_dispatch:         # Actions 탭에서 직접 실행
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Read one row
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+        run: |
+          curl -sf "$SUPABASE_URL/rest/v1/latest_scores?select=id&limit=1" \
+            -H "apikey: $SUPABASE_KEY" -o /dev/null
+          echo "ok"

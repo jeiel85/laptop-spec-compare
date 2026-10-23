@@ -1,0 +1,1371 @@
+<title>노트북 사양 비교</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;700&display=swap">
+<style>
+/* Layout: 한 열 작업 페이지. 두 기기 카드 → 성능 측정 → 한눈에 보기 → 항목별 비교 → 용도별 정리 → (선택) 정확한 사양 넣기. 파랑 = 기준 노트북, 주황 = 지금 이 노트북 */
+:root {
+  --bg: #f3f5f8;
+  --surface: #ffffff;
+  --fg: #151922;
+  --muted: #5a6373;
+  --line: #dce1e9;
+  --track: #e8ecf2;
+  --a: #2457d6;
+  --a-ink: #1b46b0;
+  --a-soft: #e2eafc;
+  --b: #d4561c;
+  --b-ink: #a33f10;
+  --b-soft: #fbe8dd;
+  --eq-ink: #4b5363;
+  --eq-soft: #e9ecf1;
+  --ok: #1f7a4d;
+  --warn: #a33f10;
+  --code-bg: #10141b;
+  --code-fg: #dfe6f2;
+  --on-primary: #ffffff;
+  --good: #1d7347; --good-soft: #e1f2e8;
+  --mid: #8a5d00; --mid-soft: #f8edd3;
+  --bad: #b3352b; --bad-soft: #fbe3e0;
+  --font-ui: "IBM Plex Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, Consolas, "D2Coding", monospace;
+  --r: 10px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f1217; --surface: #171b22; --fg: #e7eaf0; --muted: #9ba3b1; --line: #2a303a; --track: #232831;
+    --a: #7c9fff; --a-ink: #a9c0ff; --a-soft: #1b284a;
+    --b: #ff8a57; --b-ink: #ffb08b; --b-soft: #42251a;
+    --eq-ink: #b4bbc7; --eq-soft: #252a33; --ok: #5fcf97; --warn: #ffb08b;
+    --code-bg: #0a0d12; --code-fg: #dfe6f2; --on-primary: #1a0d06;
+    --good: #62d39b; --good-soft: #163327; --mid: #f0bd5c; --mid-soft: #3a2d12; --bad: #ff8f85; --bad-soft: #3e1e1b;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0f1217; --surface: #171b22; --fg: #e7eaf0; --muted: #9ba3b1; --line: #2a303a; --track: #232831;
+  --a: #7c9fff; --a-ink: #a9c0ff; --a-soft: #1b284a;
+  --b: #ff8a57; --b-ink: #ffb08b; --b-soft: #42251a;
+  --eq-ink: #b4bbc7; --eq-soft: #252a33; --ok: #5fcf97; --warn: #ffb08b;
+  --code-bg: #0a0d12; --code-fg: #dfe6f2; --on-primary: #1a0d06;
+  --good: #62d39b; --good-soft: #163327; --mid: #f0bd5c; --mid-soft: #3a2d12; --bad: #ff8f85; --bad-soft: #3e1e1b;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-ui);
+  font-size: 15px;
+  line-height: 1.6;
+}
+.wrap {
+  max-width: 920px;
+  margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 40px 64px;
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+}
+h1, h2, h3 { margin: 0; text-wrap: balance; }
+h1 { font-size: 30px; line-height: 1.25; font-weight: 700; letter-spacing: -0.01em; }
+h2 { font-size: 19px; font-weight: 700; }
+h3 { font-size: 15px; font-weight: 700; }
+p { margin: 0; }
+.lede { color: var(--muted); max-width: 62ch; }
+.eyebrow { font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+header { display: flex; flex-direction: column; gap: 10px; }
+section { display: flex; flex-direction: column; gap: 16px; }
+.sec-head { display: flex; flex-direction: column; gap: 4px; }
+.sec-head p { color: var(--muted); font-size: 14px; }
+.banner {
+  border: 1px solid var(--a);
+  background: var(--a-soft);
+  color: var(--a-ink);
+  border-radius: var(--r);
+  padding: 12px 16px;
+  font-size: 14px;
+}
+
+/* 기기 카드 */
+.devices { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items: start; }
+.device {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-top: 4px solid var(--dev);
+  border-radius: var(--r);
+  padding: 18px 20px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+.device.a { --dev: var(--a); --dev-ink: var(--a-ink); --dev-soft: var(--a-soft); }
+.device.b { --dev: var(--b); --dev-ink: var(--b-ink); --dev-soft: var(--b-soft); }
+.device-top { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; }
+.device-role { font-weight: 700; color: var(--dev-ink); }
+.tag { font-family: var(--font-mono); font-size: 11.5px; padding: 2px 8px; border-radius: 999px; background: var(--dev-soft); color: var(--dev-ink); white-space: nowrap; }
+.device-name { font-size: 17px; font-weight: 700; line-height: 1.35; overflow-wrap: anywhere; }
+.specs { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 6px 14px; font-size: 14px; }
+.specs dt { color: var(--muted); font-size: 13px; padding-top: 1px; }
+.specs dd { margin: 0; min-width: 0; overflow-wrap: anywhere; }
+.specs .sub { display: block; }
+.inputs { display: flex; flex-direction: column; gap: 10px; border-top: 1px solid var(--line); padding-top: 14px; }
+.field { display: grid; grid-template-columns: 76px 1fr; align-items: center; gap: 10px; font-size: 13px; }
+.field label { color: var(--muted); }
+select {
+  font: inherit;
+  font-size: 13.5px;
+  width: 100%;
+  min-width: 0;
+  padding: 7px 10px;
+  border-radius: 7px;
+  border: 1px solid var(--line);
+  background: var(--bg);
+  color: var(--fg);
+}
+select:focus-visible { outline: 2px solid var(--b); outline-offset: 1px; }
+.hint { font-size: 12.5px; color: var(--muted); }
+.hint.ok { color: var(--ok); }
+
+/* 성능 측정 */
+.bench {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  padding: 18px 20px;
+  gap: 12px;
+}
+.bench-top { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+.progress { height: 8px; background: var(--track); border-radius: 4px; overflow: hidden; }
+.progress-fill { height: 100%; width: 0; background: var(--b); border-radius: 4px; }
+.status { font-size: 13.5px; color: var(--muted); }
+.status.ok { color: var(--ok); }
+.status.err { color: var(--warn); }
+.note-list { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 4px; font-size: 13px; color: var(--warn); }
+button {
+  font: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: 8px;
+  padding: 8px 16px;
+  cursor: pointer;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--fg);
+}
+button.primary { background: var(--b-ink); border-color: var(--b-ink); color: var(--on-primary); }
+button:hover { filter: brightness(0.96); }
+button:disabled { opacity: 0.55; cursor: default; }
+button:focus-visible { outline: 2px solid var(--b); outline-offset: 2px; }
+
+/* 한눈에 보기 */
+.glance { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.glance-item { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 14px 16px; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.glance-item .k { font-size: 13px; color: var(--muted); }
+.glance-item .d { font-size: 13px; color: var(--muted); font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+.chip { align-self: flex-start; font-size: 13px; font-weight: 700; padding: 3px 10px; border-radius: 999px; white-space: nowrap; }
+.chip.a { background: var(--a-soft); color: var(--a-ink); }
+.chip.b { background: var(--b-soft); color: var(--b-ink); }
+.chip.eq { background: var(--eq-soft); color: var(--eq-ink); }
+.chip.unk { border: 1px dashed var(--line); color: var(--muted); font-weight: 500; }
+
+/* 항목별 비교 */
+.table { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); overflow: hidden; }
+.trow { display: grid; grid-template-columns: 170px 1fr 150px; gap: 16px; padding: 16px 20px; align-items: center; border-top: 1px solid var(--line); }
+.trow:first-child { border-top: 0; }
+.trow .label { display: flex; flex-direction: column; gap: 2px; }
+.trow .label b { font-size: 14.5px; }
+.trow .label span { font-size: 12.5px; color: var(--muted); }
+.trow .verdict { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; text-align: right; }
+.trow .verdict .chip { align-self: flex-end; }
+.trow .verdict small { color: var(--muted); font-size: 12.5px; font-family: var(--font-mono); }
+.vals { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.notes { display: flex; flex-direction: column; gap: 2px; padding-top: 4px; }
+.bar-line { display: grid; grid-template-columns: 100px 1fr 64px; align-items: center; gap: 10px; font-size: 13px; }
+.bar-line .who, .text-line .who { color: var(--muted); display: flex; align-items: center; gap: 6px; white-space: nowrap; }
+.bar-line .who::before, .text-line .who::before { content: ""; width: 8px; height: 8px; border-radius: 2px; background: var(--dev); flex-shrink: 0; }
+.bar-line.a, .text-line.a { --dev: var(--a); }
+.bar-line.b, .text-line.b { --dev: var(--b); }
+.track { height: 10px; background: var(--track); border-radius: 3px; overflow: hidden; }
+.fill { height: 100%; width: 0; background: var(--dev); border-radius: 3px; transition: width .5s ease; }
+.bar-line .num { text-align: right; font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+.bar-line .none { grid-column: 2 / 4; color: var(--muted); font-size: 12.5px; }
+.text-line { display: grid; grid-template-columns: 100px 1fr; gap: 10px; font-size: 13.5px; }
+.text-line .t { min-width: 0; overflow-wrap: anywhere; }
+.sub { font-size: 12.5px; color: var(--muted); }
+
+/* 할 수 있는 것 */
+.pills { display: flex; flex-wrap: wrap; gap: 8px; }
+.pill { font-size: 13px; font-weight: 700; padding: 3px 12px; border-radius: 999px; font-variant-numeric: tabular-nums; }
+.pill.ok { background: var(--good-soft); color: var(--good); }
+.pill.meh { background: var(--mid-soft); color: var(--mid); }
+.pill.no { background: var(--bad-soft); color: var(--bad); }
+.pill.unk { border: 1px dashed var(--line); color: var(--muted); font-weight: 500; }
+.can-list { list-style: none; margin: 0; padding: 0; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); overflow: hidden; }
+.can { display: grid; grid-template-columns: 30px 1fr auto; gap: 12px; align-items: start; padding: 13px 18px; border-top: 1px solid var(--line); }
+.can:first-child { border-top: 0; }
+.mark { width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; font-weight: 700; font-size: 14px; }
+.can.ok .mark { background: var(--good-soft); color: var(--good); }
+.can.meh .mark { background: var(--mid-soft); color: var(--mid); }
+.can.no .mark { background: var(--bad-soft); color: var(--bad); }
+.can.unk .mark, .can.na .mark { border: 1px dashed var(--line); color: var(--muted); }
+.can-body { display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 10px; row-gap: 2px; min-width: 0; padding-top: 3px; }
+.can-body b { font-size: 14.5px; }
+.can-state { font-size: 13px; font-weight: 700; }
+.can.ok .can-state { color: var(--good); }
+.can.meh .can-state { color: var(--mid); }
+.can.no .can-state { color: var(--bad); }
+.can.unk .can-state, .can.na .can-state { color: var(--muted); }
+.can-note { flex-basis: 100%; font-size: 13px; color: var(--muted); }
+.can-a { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); white-space: nowrap; padding-top: 5px; }
+.can-a .who-a { display: flex; align-items: center; gap: 5px; }
+.can-a .who-a::before { content: ""; width: 7px; height: 7px; border-radius: 2px; background: var(--a); }
+.can-a .m { width: 20px; height: 20px; border-radius: 50%; display: grid; place-items: center; font-weight: 700; font-size: 11px; }
+.can-a.ok .m { background: var(--good-soft); color: var(--good); }
+.can-a.meh .m { background: var(--mid-soft); color: var(--mid); }
+.can-a.no .m { background: var(--bad-soft); color: var(--bad); }
+.can-a.unk .m { border: 1px dashed var(--line); }
+
+/* 다른 사람들과 비교 */
+.lb-filters { display: flex; flex-wrap: wrap; gap: 8px; }
+.lb-filters button { padding: 5px 14px; border-radius: 999px; font-size: 13.5px; }
+.lb-filters button[aria-pressed="true"] { background: var(--b-soft); border-color: var(--b); color: var(--b-ink); font-weight: 700; }
+.lb-row { display: grid; grid-template-columns: 40px minmax(0, 1.3fr) 60px minmax(0, 1.5fr) 68px 68px; gap: 12px; padding: 11px 18px; align-items: center; border-top: 1px solid var(--line); font-size: 14px; }
+.lb-row:first-child { border-top: 0; }
+.lb-row.head { font-size: 12.5px; color: var(--muted); padding-block: 9px; }
+.lb-row.me { box-shadow: inset 0 0 0 2px var(--b); border-radius: var(--r); }
+.lb-row .rank { font-family: var(--font-mono); color: var(--muted); }
+.lb-row .n { text-align: right; font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+.lb-row .nick, .lb-row .cpu { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.lb-row .nm { display: inline-flex; align-items: center; gap: 6px; }
+.lb-row.ref .nm::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--a); flex-shrink: 0; }
+.lb-row .sub-line { display: none; }
+.lb-empty { padding: 16px 20px; font-size: 14px; color: var(--muted); }
+.lb-up { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 16px 20px; display: flex; flex-direction: column; gap: 10px; }
+.lb-up .row label { font-size: 13px; color: var(--muted); }
+input[type="text"] {
+  font: inherit;
+  font-size: 14px;
+  flex: 1 1 180px;
+  min-width: 0;
+  max-width: 280px;
+  padding: 7px 10px;
+  border-radius: 7px;
+  border: 1px solid var(--line);
+  background: var(--bg);
+  color: var(--fg);
+}
+input[type="text"]:focus-visible { outline: 2px solid var(--b); outline-offset: 1px; }
+
+/* 정확한 사양 넣기 (선택) */
+.intake { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); }
+.intake > summary { list-style: none; cursor: pointer; padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.intake > summary::-webkit-details-marker { display: none; }
+.intake > summary::after { content: "열기"; font-size: 13px; color: var(--muted); flex-shrink: 0; }
+.intake[open] > summary::after { content: "접기"; }
+.intake > summary:focus-visible { outline: 2px solid var(--b); outline-offset: 2px; border-radius: var(--r); }
+.intake .sum-text { display: flex; flex-direction: column; gap: 2px; }
+.intake .sum-text span { font-size: 13px; color: var(--muted); }
+.intake-body { padding: 0 20px 22px; display: flex; flex-direction: column; gap: 14px; }
+.intake-body ol { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; font-size: 14px; }
+kbd { font-family: var(--font-mono); font-size: 12.5px; padding: 1px 6px; border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 5px; background: var(--bg); }
+.cmd {
+  margin: 0;
+  background: var(--code-bg);
+  color: var(--code-fg);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1.55;
+  padding: 14px 16px;
+  border-radius: 8px;
+  white-space: pre-wrap;
+  word-break: break-all;
+  max-height: 7.8em;
+  overflow: auto;
+}
+.cmd:focus-visible { outline: 2px solid var(--b); outline-offset: 2px; }
+.row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+textarea {
+  width: 100%;
+  min-height: 84px;
+  resize: vertical;
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  padding: 12px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: var(--bg);
+  color: var(--fg);
+}
+textarea:focus-visible { outline: 2px solid var(--b); outline-offset: 1px; }
+
+.foot { font-size: 13px; color: var(--muted); max-width: 70ch; display: flex; flex-direction: column; gap: 6px; }
+
+@media (max-width: 760px) {
+  .glance { grid-template-columns: 1fr 1fr; }
+  .trow { grid-template-columns: 1fr auto; grid-template-areas: "label verdict" "vals vals"; gap: 12px; }
+  .trow .label { grid-area: label; }
+  .trow .verdict { grid-area: verdict; }
+  .trow .vals { grid-area: vals; }
+}
+@media (max-width: 620px) {
+  h1 { font-size: 25px; }
+  .wrap { padding-block: 28px 48px; gap: 30px; }
+  .devices { grid-template-columns: 1fr; }
+  .bar-line { grid-template-columns: 88px 1fr 56px; font-size: 12.5px; }
+  .text-line { grid-template-columns: 88px 1fr; font-size: 12.5px; }
+  .lb-row { grid-template-columns: 32px minmax(0, 1fr) 60px; gap: 10px; padding-inline: 14px; }
+  .lb-row .kind, .lb-row .cpu, .lb-row .single { display: none; }
+  .lb-row .sub-line { display: block; font-size: 12px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; }
+  .lb-up .row label { flex-basis: 100%; }
+  input[type="text"] { max-width: none; }
+}
+@media (prefers-reduced-motion: reduce) { .fill { transition: none; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <span class="eyebrow">Spec check · 자동 측정</span>
+    <h1>노트북 사양 비교</h1>
+    <p class="lede">이 페이지를 연 노트북, 휴대폰, 태블릿을 자동으로 확인하고 측정해서, 저장해 둔 기준 노트북과 비교해요. 충전기를 꽂고 다른 프로그램이나 앱을 닫아 두면 더 정확해요.</p>
+  </header>
+
+  <div class="banner" id="same-banner" hidden>지금 연 노트북이 저장된 기준 노트북으로 보여요. 개인 노트북에서 이 페이지를 열면 그 노트북이 자동으로 측정돼요.</div>
+
+  <div class="devices">
+    <article class="device a">
+      <div class="device-top">
+        <span class="device-role">기준 노트북</span>
+        <span class="tag">저장된 사양</span>
+      </div>
+      <div class="device-name">기준 노트북 (1,000점)</div>
+      <dl class="specs">
+        <dt>CPU</dt><dd>Intel Core 5 210H · 8코어 12스레드</dd>
+        <dt>메모리</dt><dd>32GB DDR5 5200MHz · 16GB × 2</dd>
+        <dt>그래픽</dt><dd>Intel Graphics (내장, 48EU)</dd>
+        <dt>저장장치</dt><dd>NVMe SSD 1TB</dd>
+        <dt>화면</dt><dd>1920×1080 · 60Hz</dd>
+        <dt>운영체제</dt><dd>Windows 11 Pro</dd>
+      </dl>
+    </article>
+    <article class="device b">
+      <div class="device-top">
+        <span class="device-role" id="b-role">지금 이 기기</span>
+        <span class="tag" id="b-tag">자동 감지 중</span>
+      </div>
+      <div class="device-name" id="b-name">이 기기를 확인하는 중이에요</div>
+      <dl class="specs" id="b-specs"></dl>
+      <div class="inputs">
+        <div class="field"><label for="cpu-pick" id="cpu-label">CPU 모델</label><select id="cpu-pick"></select></div>
+        <div class="field"><label for="ram-pick">메모리</label><select id="ram-pick"></select></div>
+        <div class="field" id="gpu-field"><label for="gpu-pick">외장 그래픽</label><select id="gpu-pick"></select></div>
+        <p class="hint" id="input-hint">브라우저는 CPU 모델명과 메모리 용량을 알려주지 않아요. 알고 있으면 골라 주세요. 바닥 스티커나 설정 → 시스템 → 정보에서 확인할 수 있어요.</p>
+      </div>
+    </article>
+  </div>
+
+  <section class="bench">
+    <div class="bench-top">
+      <h2>성능 측정</h2>
+      <button type="button" class="primary" id="rerun" disabled>다시 측정</button>
+    </div>
+    <div class="progress" aria-hidden="true"><div class="progress-fill" id="pfill"></div></div>
+    <p class="status" id="bench-status" aria-live="polite">측정을 준비하는 중이에요.</p>
+    <ul class="note-list" id="bench-notes"></ul>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <h2 id="can-title">이 기기로 할 수 있는 것</h2>
+      <p id="can-summary-text">측정이 끝나면 채워져요.</p>
+    </div>
+    <div class="pills" id="can-summary"></div>
+    <ul class="can-list" id="can-list"></ul>
+  </section>
+
+  <section id="lb" hidden>
+    <div class="sec-head">
+      <h2>다른 사람들과 비교</h2>
+      <p id="lb-summary">점수판을 불러오는 중이에요.</p>
+    </div>
+    <div class="lb-filters" role="group" aria-label="기기 종류">
+      <button type="button" data-kind="all" aria-pressed="false">전체</button>
+      <button type="button" data-kind="laptop" aria-pressed="false">노트북</button>
+      <button type="button" data-kind="mobile" aria-pressed="false">휴대폰·태블릿</button>
+    </div>
+    <div class="table" id="lb-table"></div>
+    <div class="lb-up">
+      <h3>내 점수 올리기</h3>
+      <div class="row">
+        <label for="lb-nick">닉네임 (선택)</label>
+        <input id="lb-nick" type="text" maxlength="20" autocomplete="off" spellcheck="false" placeholder="실명은 쓰지 마세요">
+        <button type="button" class="primary" id="lb-upload" disabled>점수 올리기</button>
+      </div>
+      <p class="hint">올라가는 정보: 닉네임, 기기 종류, 운영체제, CPU·그래픽 이름, 스레드 수, 메모리, 점수. 이름이나 위치는 보내지 않아요.</p>
+      <p class="status" id="lb-status" aria-live="polite"></p>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <h2>한눈에 보기</h2>
+      <p id="glance-note">측정이 끝나면 CPU 결과가 채워져요.</p>
+    </div>
+    <div class="glance" id="glance"></div>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <h2>항목별 비교</h2>
+      <p>막대가 길수록 빨라요. CPU는 이 페이지에서 직접 잰 값이고, 그래픽은 감지된 모델로 추정한 값이에요.</p>
+    </div>
+    <div class="table" id="table"></div>
+  </section>
+
+  <details class="intake" id="intake">
+    <summary><div class="sum-text"><h2>정확한 사양으로 비교하기</h2><span>선택 사항이에요. CPU 모델명과 메모리까지 정확하게 넣고 싶을 때만 쓰세요.</span></div></summary>
+    <div class="intake-body">
+      <ol>
+        <li>아래 명령어를 복사해요.</li>
+        <li>시작 버튼을 마우스 오른쪽으로 눌러 <b>터미널</b>을 열고, 붙여넣은 다음 <kbd>Enter</kbd>를 눌러요. 사양을 읽기만 하고 아무것도 바꾸지 않아요.</li>
+        <li>결과는 자동으로 복사돼요. 아래 칸에 <kbd>Ctrl</kbd> + <kbd>V</kbd> 하면 위의 CPU, 메모리, 그래픽 칸이 채워져요.</li>
+      </ol>
+<pre class="cmd" id="cmd" tabindex="0">&amp; { $ErrorActionPreference='SilentlyContinue'; $cpu=Get-CimInstance Win32_Processor|Select-Object -First 1; $cs=Get-CimInstance Win32_ComputerSystem; $mem=@(Get-CimInstance Win32_PhysicalMemory); $mt=@{20='DDR';21='DDR2';24='DDR3';26='DDR4';30='LPDDR4';34='DDR5';35='LPDDR5'}; $t=[int]($mem|Select-Object -First 1).SMBIOSMemoryType; $gb=[math]::Round((($mem|Measure-Object Capacity -Sum).Sum)/1GB); if(-not $gb){$gb=[math]::Round($cs.TotalPhysicalMemory/1GB)}; $gpus=@(Get-CimInstance Win32_VideoController|Where-Object {$_.Name -notmatch 'Remote|Basic|Virtual|Parsec|Mirror'}); $vc=$gpus|Where-Object {$_.CurrentHorizontalResolution}|Select-Object -First 1; $os=Get-CimInstance Win32_OperatingSystem; $s=[ordered]@{v=1; model=("$($cs.Manufacturer) $($cs.Model)").Trim(); family="$($cs.SystemFamily)"; cpu=$cpu.Name.Trim(); cores=$cpu.NumberOfCores; threads=$cpu.NumberOfLogicalProcessors; ramGB=$gb; ramType=$mt[$t]; ramMHz=($mem|Measure-Object ConfiguredClockSpeed -Maximum).Maximum; ramSticks=$mem.Count; ramSlots=(Get-CimInstance Win32_PhysicalMemoryArray|Measure-Object MemoryDevices -Sum).Sum; gpu=@($gpus|ForEach-Object {$_.Name.Trim()}); disk=@(Get-PhysicalDisk|Where-Object {"$($_.BusType)" -ne 'USB'}|ForEach-Object {"$($_.BusType) $($_.MediaType) $([math]::Round($_.Size/1GB))GB"}); display=$(if($vc){"$($vc.CurrentHorizontalResolution)x$($vc.CurrentVerticalResolution) $($vc.CurrentRefreshRate)Hz"}else{''}); npu=@(Get-PnpDevice -Class ComputeAccelerator -PresentOnly 2&gt;$null|ForEach-Object {$_.FriendlyName}); os="$($os.Caption) $($os.BuildNumber)"}; $j=$s|ConvertTo-Json -Compress -Depth 3; try{Set-Clipboard -Value $j -ErrorAction Stop; $c=1}catch{$c=0}; ''; $j; ''; if($c){'OK - copied to clipboard. Paste it into the compare page (Ctrl+V).'}else{'Copy the line starting with { above and paste it into the compare page.'} }</pre>
+      <div class="row">
+        <button type="button" id="copy-btn">명령어 복사</button>
+        <span class="status" id="copy-status" aria-live="polite"></span>
+      </div>
+      <textarea id="paste" aria-label="PowerShell 결과" spellcheck="false" placeholder='{"v":1,"model":"...","cpu":"..." 로 시작하는 결과를 여기에 붙여넣으세요'></textarea>
+      <div class="row">
+        <span class="status" id="paste-status" aria-live="polite"></span>
+        <button type="button" id="clear-exact" hidden>붙여넣은 사양 지우기</button>
+      </div>
+    </div>
+  </details>
+
+  <div class="foot">
+    <p>CPU 점수는 이 페이지가 브라우저에서 같은 계산 작업을 돌려서 잰 값이에요. 기준 노트북을 1,000점으로 놓고, 한 스레드로만 돌린 값(싱글코어)과 모든 스레드로 동시에 돌린 값(멀티코어)을 비교해요.</p>
+    <p>그래픽 점수는 감지되거나 고른 그래픽을 3DMark Time Spy 그래픽 점수로 알려진 값에 대응시킨 추정치예요. 휴대폰 그래픽은 기준이 달라서 점수로 비교하지 않아요.</p>
+    <p>Chrome이나 Edge에서 여는 걸 권해요. Firefox는 그래픽 이름을 감춰요. iPhone과 iPad의 Safari는 브라우저 엔진이 달라서 CPU 점수가 20% 정도 다르게 나올 수 있어요.</p>
+  </div>
+</div>
+
+<script>
+// 기준 노트북: 2026-10-23 수집. bench는 같은 측정 코드를 기준 노트북에서 돌린 값(전원 연결, Chromium)
+const A = {
+  name: '기준 노트북', cpu: 'Core 5 210H', threads: 12, ramGB: 32,
+  gpu: { label: 'Intel Graphics (48EU)', score: 1050, kind: '내장', vram: 0 },
+  display: { w: 1920, h: 1080, hz: 60 }, npu: false,
+  bench: { single: 1.41, multi: 7.95 }, // 3회 측정 중앙값 (싱글 1.36~1.42, 멀티 7.78~8.05)
+};
+// Supabase 점수판. 비워 두면 점수판을 숨겨요. key는 공개용 키(publishable 또는 anon)만 넣어요
+const LEADERBOARD = { url: 'https://ijemtaegzsecsqqcgeza.supabase.co', key: 'sb_publishable_ycOD-qcCC3GSFZmEuIpWNw_fsQiyoog' };
+const BENCH_VERSION = 1; // WORKER_SRC나 측정 순서를 바꾸면 올려요
+const LA = '기준 노트북';
+let LB = '이 기기';
+const KIND = {
+  laptop: { role: '지금 이 노트북', label: '이 노트북', cpu: 'CPU 모델' },
+  phone: { role: '지금 이 휴대폰', label: '이 휴대폰', cpu: '칩 (AP)' },
+  tablet: { role: '지금 이 태블릿', label: '이 태블릿', cpu: '칩 (AP)' },
+};
+const STORE_KEY = 'spec-compare-v2';
+
+// [모델(정규식 토큰), CPU 멀티(R23), CPU 싱글(R23), 내장 그래픽, 그래픽 점수, NPU]
+const CPU_TABLE = [
+  ['Core 5 210H', 10500, 1700, 'Intel Graphics (48EU)', 1050, 0],
+  ['Core 5 220H', 13500, 1750, 'Intel Graphics (80EU)', 1800, 0],
+  ['Core 7 240H', 14500, 1850, 'Intel Graphics (64EU)', 1300, 0],
+  ['Core 7 250H', 16000, 1900, 'Intel Graphics (96EU)', 2100, 0],
+  ['Core 5 120U', 7500, 1750, 'Intel Graphics (80EU)', 1500, 0],
+  ['Core 7 150U', 7800, 1850, 'Intel Graphics (96EU)', 1800, 0],
+  ['Ultra 5 125U', 8500, 1650, 'Intel Graphics (4 Xe)', 1900, 1],
+  ['Ultra 7 155U', 9000, 1700, 'Intel Graphics (4 Xe)', 2000, 1],
+  ['Ultra 5 125H', 12500, 1700, 'Intel Arc (7 Xe)', 3000, 1],
+  ['Ultra 7 155H', 15000, 1750, 'Intel Arc (8 Xe)', 3400, 1],
+  ['Ultra 5 226V', 9500, 1850, 'Intel Arc 130V', 3500, 1],
+  ['Ultra 7 25[68]V', 10500, 1950, 'Intel Arc 140V', 4100, 1],
+  ['Ultra 5 225H', 16500, 2000, 'Intel Arc (7 Xe)', 3500, 1],
+  ['Ultra 7 255H', 19000, 2100, 'Intel Arc 140T', 4300, 1],
+  ['i5-8250U', 2800, 950, 'Intel UHD 620', 450, 0],
+  ['i5-10210U', 3300, 1050, 'Intel UHD', 450, 0],
+  ['i5-10300H', 4500, 1150, 'Intel UHD 630', 500, 0],
+  ['i7-10750H', 7500, 1200, 'Intel UHD 630', 500, 0],
+  ['i5-1135G7', 4600, 1350, 'Intel Iris Xe (80EU)', 1400, 0],
+  ['i7-1165G7', 5000, 1450, 'Intel Iris Xe (96EU)', 1700, 0],
+  ['i5-11400H', 9000, 1450, 'Intel UHD (16EU)', 450, 0],
+  ['i7-11800H', 12000, 1500, 'Intel UHD (32EU)', 700, 0],
+  ['i5-1235U', 6500, 1550, 'Intel Iris Xe (80EU)', 1500, 0],
+  ['i7-1255U', 7000, 1650, 'Intel Iris Xe (96EU)', 1700, 0],
+  ['i5-12450H', 9000, 1600, 'Intel UHD (48EU)', 1000, 0],
+  ['i5-12450HX', 10500, 1650, 'Intel UHD (16EU)', 450, 0],
+  ['i5-12500H', 12500, 1650, 'Intel Iris Xe (80EU)', 1700, 0],
+  ['i7-12650H', 13500, 1750, 'Intel UHD (64EU)', 1250, 0],
+  ['i7-12700H', 15500, 1800, 'Intel Iris Xe (96EU)', 2000, 0],
+  ['i5-1335U', 7000, 1600, 'Intel Iris Xe (80EU)', 1500, 0],
+  ['i7-1355U', 7500, 1700, 'Intel Iris Xe (96EU)', 1750, 0],
+  ['i5-13420H', 10500, 1700, 'Intel UHD (48EU)', 1050, 0],
+  ['i5-13450HX', 16000, 1800, 'Intel UHD (16EU)', 450, 0],
+  ['i5-13500H', 13500, 1750, 'Intel Iris Xe (80EU)', 1800, 0],
+  ['i7-13620H', 14500, 1850, 'Intel UHD (64EU)', 1300, 0],
+  ['i7-13650HX', 22000, 1900, 'Intel UHD (16EU)', 450, 0],
+  ['i7-13700H', 16000, 1900, 'Intel Iris Xe (96EU)', 2100, 0],
+  ['i7-14650HX', 27000, 2050, 'Intel UHD (16EU)', 450, 0],
+  ['i7-14700HX', 28000, 2050, 'Intel UHD (16EU)', 450, 0],
+  ['Ryzen 7 3700U', 2900, 900, 'Radeon Vega 10', 800, 0],
+  ['Ryzen 5 4600HS?', 8500, 1150, 'Radeon Vega 6', 1000, 0],
+  ['Ryzen 7 4700U', 6500, 1150, 'Radeon Vega 7', 1050, 0],
+  ['Ryzen 7 4800HS?', 11000, 1200, 'Radeon Vega 7', 1100, 0],
+  ['Ryzen 5 5500U', 7000, 1200, 'Radeon Vega 7', 1000, 0],
+  ['Ryzen 5 5600HS?', 9200, 1400, 'Radeon Vega 7', 1150, 0],
+  ['Ryzen 7 5700U', 8500, 1200, 'Radeon Vega 8', 1150, 0],
+  ['Ryzen 7 58[02]5?U', 9500, 1420, 'Radeon Vega 8', 1250, 0],
+  ['Ryzen 7 5800HS?', 12500, 1450, 'Radeon Vega 8', 1300, 0],
+  ['Ryzen 5 6600HS?', 10500, 1500, 'Radeon 660M', 1700, 0],
+  ['Ryzen 7 6800HS?', 13500, 1530, 'Radeon 680M', 2500, 0],
+  ['Ryzen 5 7235HS?', 7500, 1450, '', 0, 0],
+  ['Ryzen 7 7435HS?', 13000, 1500, '', 0, 0],
+  ['Ryzen 5 7530U', 7800, 1400, 'Radeon Vega 7', 1100, 0],
+  ['Ryzen 5 7535HS?', 10500, 1500, 'Radeon 660M', 1700, 0],
+  ['Ryzen 7 7730U', 9000, 1420, 'Radeon Vega 8', 1250, 0],
+  ['Ryzen 7 7735HS?', 13500, 1530, 'Radeon 680M', 2500, 0],
+  ['Ryzen 5 7640HS?', 13000, 1750, 'Radeon 760M', 2500, 1],
+  ['Ryzen 7 7840U', 13000, 1750, 'Radeon 780M', 2600, 1],
+  ['Ryzen 7 7840HS?', 16500, 1780, 'Radeon 780M', 2900, 1],
+  ['Ryzen 5 864[05]HS', 13000, 1750, 'Radeon 760M', 2500, 1],
+  ['Ryzen 7 8840U', 13500, 1750, 'Radeon 780M', 2600, 1],
+  ['Ryzen 7 884[05]HS?', 16500, 1780, 'Radeon 780M', 2900, 1],
+  ['Ryzen 5 220', 13000, 1750, 'Radeon 760M', 2500, 1],
+  ['Ryzen 7 2[56]0', 16500, 1780, 'Radeon 780M', 2900, 1],
+  ['Ryzen AI 5 340', 12000, 1900, 'Radeon 840M', 1900, 1],
+  ['Ryzen AI 7 350', 16000, 1950, 'Radeon 860M', 2800, 1],
+  ['Ryzen AI 9 HX 370', 20000, 2000, 'Radeon 890M', 3700, 1],
+  // 휴대폰·태블릿 칩: CPU는 측정값으로만 비교하고, 그래픽은 기준이 달라 점수를 매기지 않아요
+  ['Snapdragon 8 Elite', 0, 0, 'Adreno 830', 0, 1],
+  ['Snapdragon 8 Gen 3', 0, 0, 'Adreno 750', 0, 1],
+  ['Snapdragon 8 Gen 2', 0, 0, 'Adreno 740', 0, 1],
+  ['Snapdragon 8\\+ Gen 1', 0, 0, 'Adreno 730', 0, 1],
+  ['Snapdragon 8 Gen 1', 0, 0, 'Adreno 730', 0, 1],
+  ['Snapdragon 7\\+ Gen 2', 0, 0, 'Adreno 725', 0, 1],
+  ['Snapdragon 888', 0, 0, 'Adreno 660', 0, 1],
+  ['Exynos 2400', 0, 0, 'Xclipse 940', 0, 1],
+  ['Exynos 2200', 0, 0, 'Xclipse 920', 0, 1],
+  ['Exynos 1480', 0, 0, 'Xclipse 530', 0, 1],
+  ['Exynos 1380', 0, 0, 'Mali-G68', 0, 1],
+  ['Dimensity 9300', 0, 0, 'Immortalis-G720', 0, 1],
+  ['Dimensity 9200', 0, 0, 'Immortalis-G715', 0, 1],
+  ['Dimensity 8100', 0, 0, 'Mali-G610', 0, 1],
+  ['Tensor G4', 0, 0, 'Mali-G715', 0, 1],
+  ['Tensor G3', 0, 0, 'Immortalis-G715', 0, 1],
+  ['Tensor G2', 0, 0, 'Mali-G710', 0, 1],
+  ['Apple A18 Pro', 0, 0, 'Apple GPU', 0, 1],
+  ['Apple A17 Pro', 0, 0, 'Apple GPU', 0, 1],
+  ['Apple A16', 0, 0, 'Apple GPU', 0, 1],
+  ['Apple A15', 0, 0, 'Apple GPU', 0, 1],
+  ['Apple M[124]', 0, 0, 'Apple GPU', 0, 1],
+];
+// 휴대폰·태블릿 칩 (선택 목록)
+const MOBILE_CHIPS = [
+  ['Snapdragon', [['Snapdragon 8 Elite', ''], ['Snapdragon 8 Gen 3', ''], ['Snapdragon 8 Gen 2', ''], ['Snapdragon 8+ Gen 1', ''], ['Snapdragon 8 Gen 1', ''], ['Snapdragon 7+ Gen 2', ''], ['Snapdragon 888', '']]],
+  ['Exynos', [['Exynos 2400', ''], ['Exynos 2200', ''], ['Exynos 1480', ''], ['Exynos 1380', '']]],
+  ['Dimensity', [['Dimensity 9300', ''], ['Dimensity 9200', ''], ['Dimensity 8100', '']]],
+  ['Google Tensor', [['Tensor G4', ''], ['Tensor G3', ''], ['Tensor G2', '']]],
+  ['Apple', [['Apple A18 Pro', 'iPhone 16 Pro'], ['Apple A17 Pro', 'iPhone 15 Pro'], ['Apple A16', 'iPhone 15 · 14 Pro'], ['Apple A15', 'iPhone 14 · 13'], ['Apple M1', 'iPad'], ['Apple M2', 'iPad'], ['Apple M4', 'iPad Pro']]],
+];
+// 레노버 LOQ에 들어가는 CPU (선택 목록)
+const LOQ_CPUS = [
+  ['AMD', [['Ryzen 7 8845HS', 'LOQ 15AHP9'], ['Ryzen 7 7840HS', 'LOQ 15APH8'], ['Ryzen 7 7435HS', 'LOQ 15ARP9'], ['Ryzen 7 250', ''], ['Ryzen 5 8645HS', 'LOQ 15AHP9'], ['Ryzen 5 7640HS', 'LOQ 15APH8'], ['Ryzen 5 7235HS', 'LOQ 15ARP9'], ['Ryzen 5 220', '']]],
+  ['Intel', [['Core i5-12450H', 'LOQ 15IRH8'], ['Core i5-13420H', 'LOQ 15IRH8'], ['Core i7-13620H', 'LOQ 15IRH8'], ['Core i5-12450HX', 'LOQ 15IAX9'], ['Core i5-13450HX', 'LOQ 15IRX9'], ['Core i7-13650HX', 'LOQ 15IRX9'], ['Core i7-14700HX', 'LOQ 15IRX9']]],
+];
+// 외장 그래픽 [이름 정규식, 3DMark Time Spy 그래픽 점수, 그래픽 메모리 GB]
+const DGPU_TABLE = [
+  ['RTX\\s*5070', 12500, 8], ['RTX\\s*5060', 11500, 8], ['RTX\\s*5050', 9500, 8],
+  ['RTX\\s*4090', 20000, 16], ['RTX\\s*4080', 17500, 12], ['RTX\\s*4070', 11700, 8], ['RTX\\s*4060', 10300, 8], ['RTX\\s*4050', 8700, 6],
+  ['RTX\\s*3080', 12000, 8], ['RTX\\s*3070', 10000, 8], ['RTX\\s*3060', 8300, 6], ['RTX\\s*3050\\s*Ti', 5300, 4], ['RTX\\s*3050', 4900, 4],
+  ['RTX\\s*2080', 9500, 8], ['RTX\\s*2070', 8000, 8], ['RTX\\s*2060', 6000, 6], ['RTX\\s*2050', 3400, 4],
+  ['GTX\\s*1660\\s*Ti', 5500, 6], ['GTX\\s*1650\\s*Ti', 3800, 4], ['GTX\\s*1650', 3500, 4], ['GTX\\s*1050', 1800, 4],
+  ['MX\\s*550', 2500, 2], ['MX\\s*450', 2000, 2], ['MX\\s*350', 1250, 2],
+  ['RX\\s*7600S', 8500, 8], ['RX\\s*6600M', 8500, 8], ['RX\\s*6500M', 5000, 4],
+  ['Arc.*A370M', 4300, 4], ['Arc.*A350M', 2900, 4],
+];
+const LOQ_GPUS = ['RTX 2050', 'RTX 3050', 'RTX 3050 6GB', 'RTX 4050', 'RTX 4060', 'RTX 4070', 'RTX 5050', 'RTX 5060', 'RTX 5070', 'GTX 1650'];
+// WebGPU가 알려주는 NVIDIA 세대 → 후보 모델
+const ARCH_MAP = { blackwell: ['RTX 5050', 'RTX 5060', 'RTX 5070'], lovelace: ['RTX 4050', 'RTX 4060', 'RTX 4070'], ampere: ['RTX 2050', 'RTX 3050', 'RTX 3050 6GB'], turing: ['GTX 1650'] };
+const ARCH_NAME = { blackwell: 'RTX 50 시리즈', lovelace: 'RTX 40 시리즈', ampere: 'RTX 30 시리즈', turing: 'GTX 16 / RTX 20 시리즈' };
+// 그래픽 이름만으로 알 수 있는 내장 그래픽
+const IGPU_TABLE = [
+  ['890M', 3700], ['880M', 3300], ['860M', 2800], ['840M', 1900], ['780M', 2900], ['760M', 2500], ['740M', 1500],
+  ['680M', 2500], ['660M', 1650], ['610M', 600], ['Arc.*140V', 4100], ['Arc.*130V', 3500], ['Iris.*Xe', 1600],
+  // 이름만으로는 세대를 알 수 없는 인텔 내장 그래픽은 낮게 잡아요
+  ['Intel.*Arc', 3000], ['^Intel(\\(R\\))?\\s+Graphics$', 1000], ['Intel.*UHD', 600],
+];
+
+const norm = s => String(s || '').replace(/\((R|TM)\)/gi, '').replace(/\bPRO\s+/gi, '').replace(/\s+/g, ' ').trim();
+const tokenRe = t => new RegExp('(?:^|[^0-9A-Za-z])' + t.replace(/ /g, '\\s+') + '(?![0-9A-Za-z])', 'i');
+const CPU_DB = CPU_TABLE.map(([t, multi, single, igpu, igpuScore, npu]) => ({ re: tokenRe(t), multi, single, igpu, igpuScore, npu: !!npu }));
+const DGPU_DB = DGPU_TABLE.map(([t, score, vram]) => ({ re: new RegExp(t, 'i'), score, vram }));
+const IGPU_DB = IGPU_TABLE.map(([t, score]) => ({ re: new RegExp(t, 'i'), score }));
+const findCpu = name => CPU_DB.find(c => c.re.test(norm(name))) || null;
+const findDgpu = name => DGPU_DB.find(g => g.re.test(name)) || null;
+
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const arr = v => Array.isArray(v) ? v : (v && Array.isArray(v.value)) ? v.value : (v == null || v === '') ? [] : [v];
+const num = v => (typeof v === 'number' && isFinite(v)) ? v : (parseFloat(v) || 0);
+const fmt = n => Math.round(n).toLocaleString('ko-KR');
+const $ = id => document.getElementById(id);
+
+function cleanCpu(name) {
+  return norm(name).replace(/^\d+th Gen\s+/i, '').replace(/^(AMD|Intel)\s+/i, '').replace(/\s+(with|w\/)\s.*$/i, '').replace(/\s*@.*$/, '').replace(/\s*\d+-Core Processor$/i, '');
+}
+function cleanGpu(name) {
+  return norm(name).replace(/^NVIDIA\s+/i, '').replace(/^AMD\s+/i, '').replace(/\s+Laptop GPU$/i, ' Laptop');
+}
+// "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028A0) Direct3D11 vs_5_0 ps_5_0, D3D11)" → "NVIDIA GeForce RTX 4060 Laptop GPU"
+function parseRenderer(s) {
+  const m = String(s || '').match(/ANGLE \([^,]*,\s*(.+?)\s*(?:\(0x[0-9a-f]+\))?\s*(?:Direct3D|D3D|OpenGL|Vulkan|Metal)/i);
+  return (m ? m[1] : String(s || '')).trim();
+}
+
+// ---------- 저장 ----------
+const state = { det: null, bench: null, cpu: '', ram: '', gpu: '', gpuAuto: '', exact: null };
+function load() {
+  try {
+    const s = JSON.parse(localStorage.getItem(STORE_KEY) || '{}');
+    Object.assign(state, { cpu: s.cpu || '', ram: s.ram || '', gpu: s.gpu || '', exact: s.exact || null, bench: s.bench || null });
+  } catch (e) {}
+}
+function save() {
+  try { localStorage.setItem(STORE_KEY, JSON.stringify({ cpu: state.cpu, ram: state.ram, gpu: state.gpu, exact: state.exact, bench: state.bench })); } catch (e) {}
+}
+
+// ---------- 브라우저로 감지 ----------
+const withTimeout = (p, ms) => Promise.race([p, new Promise(r => setTimeout(() => r(null), ms))]);
+function measureHz() {
+  return new Promise(resolve => {
+    const ts = [];
+    const done = () => {
+      if (ts.length < 10) return resolve(0);
+      const d = ts.slice(1).map((t, i) => t - ts[i]).sort((x, y) => x - y);
+      const hz = 1000 / d[Math.floor(d.length / 2)];
+      const common = [60, 75, 90, 100, 120, 144, 165, 180, 240, 300, 360];
+      resolve(common.reduce((b, c) => Math.abs(c - hz) < Math.abs(b - hz) ? c : b, 60));
+    };
+    const tick = t => { ts.push(t); if (ts.length < 60) requestAnimationFrame(tick); else done(); };
+    requestAnimationFrame(tick);
+    setTimeout(done, 1500);
+  });
+}
+function deviceKind() {
+  const ua = navigator.userAgent;
+  if (/iPhone|iPod/.test(ua)) return 'phone';
+  if (/iPad/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1)) return 'tablet';
+  if (/Android/.test(ua)) return /Mobile/.test(ua) ? 'phone' : 'tablet';
+  if (navigator.userAgentData && navigator.userAgentData.mobile) return 'phone';
+  return 'laptop';
+}
+async function detect() {
+  const d = { kind: deviceKind(), threads: navigator.hardwareConcurrency || 0, renderer: '', rendererName: '', hp: null, screen: null, hz: 0, os: '', model: '', memHint: navigator.deviceMemory || 0 };
+  try {
+    const c = document.createElement('canvas');
+    const gl = c.getContext('webgl2', { powerPreference: 'high-performance' }) || c.getContext('webgl', { powerPreference: 'high-performance' });
+    if (gl) {
+      const ext = gl.getExtension('WEBGL_debug_renderer_info');
+      d.renderer = String(ext ? gl.getParameter(ext.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER));
+      d.rendererName = parseRenderer(d.renderer);
+      const lose = gl.getExtension('WEBGL_lose_context'); if (lose) lose.loseContext();
+    }
+  } catch (e) {}
+  try {
+    if (navigator.gpu) {
+      const ad = await withTimeout(navigator.gpu.requestAdapter({ powerPreference: 'high-performance' }), 2000);
+      if (ad) {
+        const info = ad.info || (ad.requestAdapterInfo ? await withTimeout(ad.requestAdapterInfo(), 1000) : null);
+        if (info) d.hp = { vendor: String(info.vendor || '').toLowerCase(), arch: String(info.architecture || '').toLowerCase(), desc: String(info.description || '') };
+      }
+    }
+  } catch (e) {}
+  const dpr = window.devicePixelRatio || 1;
+  d.screen = { w: Math.round(screen.width * dpr), h: Math.round(screen.height * dpr), scale: Math.round(dpr * 100) };
+  d.hz = await measureHz();
+  const ua = navigator.userAgent;
+  try {
+    const uad = navigator.userAgentData;
+    if (uad && uad.platform) {
+      const v = await withTimeout(uad.getHighEntropyValues(['platformVersion', 'model']), 1000);
+      const major = v ? parseInt(v.platformVersion, 10) : NaN;
+      if (uad.platform === 'Windows') d.os = major >= 13 ? 'Windows 11' : 'Windows 10';
+      else if (uad.platform === 'Android') d.os = 'Android' + (major ? ' ' + major : '');
+      else d.os = uad.platform;
+      if (v && v.model) d.model = v.model;
+    }
+  } catch (e) {}
+  if (!d.os) {
+    const ios = ua.match(/OS (\d+)_\d+.*like Mac OS X/);
+    const android = ua.match(/Android (\d+)/);
+    d.os = ios ? (/iPad/.test(ua) ? 'iPadOS ' : 'iOS ') + ios[1]
+      : android ? 'Android ' + android[1]
+      : /Windows/.test(ua) ? 'Windows'
+      : /Macintosh/.test(ua) ? (d.kind === 'tablet' ? 'iPadOS' : 'macOS') : '';
+  }
+  if (!d.model) d.model = /iPhone/.test(ua) ? 'iPhone' : d.kind === 'tablet' && /Macintosh|iPad/.test(ua) ? 'iPad' : '';
+  return d;
+}
+const is기준 노트북 = d => d && d.threads === A.threads && /Intel/i.test(d.rendererName) && !/NVIDIA|Radeon/i.test(d.rendererName) && d.screen && d.screen.w === 1920 && d.screen.h === 1080;
+
+// ---------- CPU 측정 ----------
+const WORKER_SRC = `
+self.onmessage = function (e) {
+  var ms = e.data.ms, buf = new Float64Array(4096), x = (2463534242 ^ e.data.seed) | 0, acc = 0;
+  function chunk() {
+    for (var i = 0; i < 40000; i++) {
+      x ^= x << 13; x ^= x >>> 17; x ^= x << 5;
+      var k = (x >>> 0) & 4095;
+      var v = buf[k] * 0.5 + Math.sqrt(((x >>> 0) % 10007) + 1);
+      buf[(k * 31) & 4095] = v;
+      acc += v;
+    }
+  }
+  var warm = performance.now() + 250;
+  while (performance.now() < warm) chunk();
+  var n = 0, start = performance.now(), end = start + ms;
+  while (performance.now() < end) { chunk(); n++; }
+  self.postMessage({ rate: n / (performance.now() - start), acc: acc });
+};`;
+let workerUrl = null;
+function runWorkers(count, ms) {
+  if (!workerUrl) workerUrl = URL.createObjectURL(new Blob([WORKER_SRC], { type: 'text/javascript' }));
+  return new Promise((resolve, reject) => {
+    const ws = [];
+    let done = 0, total = 0;
+    const stop = () => ws.forEach(w => w.terminate());
+    const timer = setTimeout(() => { stop(); reject(new Error('timeout')); }, ms + 10000);
+    try {
+      for (let i = 0; i < count; i++) {
+        const w = new Worker(workerUrl);
+        w.onmessage = e => { total += e.data.rate; w.terminate(); if (++done === count) { clearTimeout(timer); resolve(total); } };
+        w.onerror = err => { clearTimeout(timer); stop(); reject(err); };
+        ws.push(w);
+      }
+    } catch (e) { clearTimeout(timer); stop(); reject(e); return; }
+    ws.forEach((w, i) => w.postMessage({ ms, seed: i + 1 }));
+  });
+}
+function setProgress(pct, ms) {
+  const el = $('pfill');
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  el.style.transition = ms && !reduce ? `width ${ms}ms linear` : 'none';
+  el.style.width = pct + '%';
+}
+// 탭이 화면에 안 보이면 브라우저가 속도를 크게 낮춰서(측정해 보니 8~12배) 보일 때만 재요
+let running = false, hiddenDuringRun = false;
+const whenVisible = () => document.hidden ? new Promise(r => {
+  const on = () => { if (!document.hidden) { document.removeEventListener('visibilitychange', on); r(); } };
+  document.addEventListener('visibilitychange', on);
+}) : Promise.resolve();
+document.addEventListener('visibilitychange', () => { if (document.hidden && running) hiddenDuringRun = true; });
+async function runBench() {
+  if (running) return;
+  running = true;
+  $('rerun').disabled = true;
+  $('lb-upload').disabled = true;
+  const threads = Math.max(1, (state.det && state.det.threads) || 4);
+  const st = $('bench-status');
+  st.className = 'status';
+  if (document.hidden) st.textContent = '이 탭이 화면에 보이면 측정을 시작해요.';
+  await whenVisible();
+  hiddenDuringRun = false;
+  try {
+    setProgress(0); await new Promise(r => setTimeout(r, 30));
+    st.textContent = 'CPU 싱글코어를 재는 중이에요. 약 3초 걸려요.';
+    setProgress(45, 3000);
+    const s1 = await runWorkers(1, 1200);
+    const s2 = await runWorkers(1, 1200);
+    st.textContent = `CPU 멀티코어를 재는 중이에요. 스레드 ${threads}개를 동시에 돌려요.`;
+    setProgress(95, 2600);
+    const multi = await runWorkers(threads, 2000);
+    if (hiddenDuringRun) {
+      running = false;
+      st.textContent = '측정 중에 다른 탭이나 앱으로 가서 결과가 정확하지 않아요. 이 탭이 보이면 다시 재요.';
+      setProgress(0);
+      return runBench();
+    }
+    state.bench = { single: Math.max(s1, s2), multi, threads, at: Date.now() };
+    window.__lastBench = state.bench;
+    save();
+    setProgress(100, 200);
+    st.className = 'status ok';
+    st.textContent = '측정이 끝났어요. 결과는 아래에 있어요.';
+  } catch (e) {
+    setProgress(0);
+    st.className = 'status err';
+    st.textContent = '이 브라우저에서는 CPU를 측정하지 못했어요. CPU 모델을 고르면 일반적인 성능 값으로 비교해요.';
+  }
+  running = false;
+  $('rerun').disabled = false;
+  render();
+  delete $('lb-status').dataset.sticky;
+  lbRefresh();
+}
+
+// ---------- 비교 ----------
+const howMuch = x => x >= 1.45 ? '약 ' + (Math.round(x * 10) / 10).toString().replace(/\.0$/, '') + '배' : '약 ' + Math.round((x - 1) * 100) + '%';
+const moreText = (x, word) => x >= 1.45 ? howMuch(x) : howMuch(x) + ' ' + word;
+function compare(a, b, tol = 0.15) {
+  if (!a || !b) return { who: 'unk', text: '판단 어려움', detail: '', ratio: 1 };
+  const r = b / a;
+  if (r >= 1 + tol) return { who: 'b', text: LB + ' 우세', detail: moreText(r, '높음'), ratio: r };
+  if (r <= 1 / (1 + tol)) return { who: 'a', text: LA + ' 우세', detail: moreText(1 / r, '높음'), ratio: 1 / r };
+  return { who: 'eq', text: '비슷함', detail: '', ratio: 1 };
+}
+const chip = v => `<span class="chip ${v.who}">${esc(v.text)}</span>`;
+const subj = v => (v.who === 'a' ? LA : LB) + '이';
+const isMobile = () => !!(state.det && state.det.kind !== 'laptop');
+const displayText = x => x.display && x.display.w ? `${x.display.w}×${x.display.h}${x.display.hz ? ' · ' + x.display.hz + 'Hz' : ''}` : '확인 못 함';
+const gpuText = x => x.gpu ? `${x.gpu.label} (${x.gpu.kind})` : (x.gpuName || '확인 못 함');
+
+// "노트북" → "으로", "기기" → "로"
+function ro(word) {
+  const c = String(word).charCodeAt(String(word).length - 1);
+  if (c < 0xAC00 || c > 0xD7A3) return '으로';
+  const jong = (c - 0xAC00) % 28;
+  return jong === 0 || jong === 8 ? '로' : '으로';
+}
+// "노트북" → "은", "기기" → "는"
+function eun(word) {
+  const c = String(word).charCodeAt(String(word).length - 1);
+  return c >= 0xAC00 && c <= 0xD7A3 && (c - 0xAC00) % 28 ? '은' : '는';
+}
+const STATUS = {
+  ok: { label: '쾌적해요', short: '쾌적', mark: '✓' },
+  meh: { label: '할 수는 있어요', short: '제한적', mark: '△' },
+  no: { label: '어려워요', short: '어려움', mark: '✕' },
+  unk: { label: '확인 중', short: '확인 중', mark: '?' },
+  na: { label: '비교 안 함', short: '비교 안 함', mark: '–' },
+};
+const S = (s, n) => ({ s, n });
+const WAIT = S('unk', '측정이 끝나면 알려드려요.');
+function game(x, okAt, mehAt, notes) {
+  if (x.mobile) return S('na', '휴대폰 게임은 PC 게임과 기준이 달라서 비교하지 않아요.');
+  if (!x.gpu) return S('unk', '그래픽을 확인하지 못했어요. 외장 그래픽을 골라 주세요.');
+  return x.gpu >= okAt ? S('ok', notes[0]) : x.gpu >= mehAt ? S('meh', notes[1]) : S('no', notes[2]);
+}
+// [항목, 짧은 이름, 판단]  x: { mobile, single, multi, gpu, nvidia, vram, ram }  CPU 점수는 기준 노트북 = 1000
+const CAN_DO = [
+  ['웹 서핑 · 문서 · 화상회의', '웹·문서', x => {
+    if (x.mobile) return S('ok', '웹, 문서 보기, 영상 통화 모두 쾌적해요.');
+    if (!x.single) return WAIT;
+    return x.single >= 500 && (!x.ram || x.ram >= 8) ? S('ok', '탭을 여러 개 띄워도 쾌적해요.') : S('meh', '탭을 많이 띄우면 느려질 수 있어요.');
+  }],
+  ['코딩 · 개발', '개발', x => {
+    if (x.mobile) return S('no', '휴대폰으로는 개발 도구를 쓰기 어려워요.');
+    if (!x.multi) return WAIT;
+    if (x.multi >= 700 && x.ram >= 16) return S('ok', 'VS Code, IntelliJ, 빌드까지 무난해요.');
+    if (x.multi >= 400) return S('meh', '할 수 있지만 큰 프로젝트는 빌드가 오래 걸려요.');
+    return S('no', '가벼운 코드 편집 정도만 권해요.');
+  }],
+  ['Docker · 가상머신 여러 개', 'Docker·가상머신', x => {
+    if (x.mobile) return S('no', '휴대폰에서는 쓸 수 없어요.');
+    if (!x.ram) return S('unk', '메모리 용량을 골라 주세요.');
+    if (x.ram >= 32) return S('ok', `메모리가 ${x.ram}GB라 여러 개를 함께 띄워도 여유 있어요.`);
+    if (x.ram >= 16) return S('meh', `1~2개는 괜찮지만, 많이 띄우면 메모리(${x.ram}GB)가 모자라요.`);
+    return S('no', `메모리(${x.ram}GB)가 작아서 어려워요.`);
+  }],
+  ['사진 편집', '사진 편집', x => {
+    if (x.mobile) return S('meh', '앱으로 가벼운 보정은 할 수 있어요.');
+    if (!x.multi) return WAIT;
+    if (x.multi >= 600 && x.ram >= 16) return S('ok', 'Photoshop, Lightroom 모두 무난해요.');
+    if (x.multi >= 400) return S('meh', '할 수 있지만 큰 파일은 느려요.');
+    return S('no', '무거운 편집은 어려워요.');
+  }],
+  ['FHD 영상 편집', 'FHD 영상 편집', x => {
+    if (x.mobile) return S('meh', 'CapCut 같은 앱으로 짧은 영상은 만들 수 있어요.');
+    if (!x.multi) return WAIT;
+    if ((x.nvidia || x.gpu >= 2400) && x.multi >= 800) return S('ok', '컷 편집, 자막, 효과까지 무난해요.');
+    if (x.multi >= 600) return S('meh', '컷 편집은 되지만, 효과를 많이 넣으면 미리보기가 끊겨요.');
+    return S('no', '편집과 내보내기가 많이 느려요.');
+  }],
+  ['4K 영상 편집', '4K 영상 편집', x => {
+    if (x.mobile) return S('no', '휴대폰으로 4K 편집은 어려워요.');
+    if (!x.multi) return WAIT;
+    if (x.nvidia && x.gpu >= 4500 && x.multi >= 1000 && x.ram >= 16) return S('ok', 'NVIDIA 그래픽 덕분에 4K도 할 만해요.');
+    if (x.nvidia || (x.gpu >= 2400 && x.multi >= 1000)) return S('meh', '저화질 편집본(프록시)을 쓰면 할 수 있어요.');
+    return S('no', '외장 그래픽이 없어서 많이 버거워요.');
+  }],
+  ['가벼운 게임 (롤, 메이플, 발로란트)', '가벼운 게임', x => game(x, 1600, 800, ['FHD 중간~높음 옵션으로 쾌적해요.', '낮은 옵션이면 할 만해요.', '많이 끊겨요.'])],
+  ['중간 게임 (배그, 오버워치)', '배그·오버워치', x => game(x, 4000, 2400, ['FHD 중간 이상 옵션으로 할 수 있어요.', '낮은 옵션이면 할 수 있어요.', '사실상 어려워요.'])],
+  ['최신 고사양 게임', '최신 고사양 게임', x => game(x, 9000, 4500, ['FHD 높음 옵션도 할 만해요.', '중간~낮음 옵션으로 할 수 있어요.', '사실상 어려워요.'])],
+  ['AI 채팅 모델 직접 돌리기', '로컬 AI', x => {
+    if (x.mobile) return S('no', '휴대폰 브라우저로는 어려워요.');
+    if (x.nvidia && x.vram >= 6) return S('ok', `그래픽 메모리 ${x.vram}GB로 7~8B 모델이 빠르게 돌아가요.`);
+    if (x.nvidia) return S('meh', `그래픽 메모리(${x.vram}GB)가 작아서 작은 모델만 빨라요.`);
+    if (!x.ram) return S('unk', '메모리 용량을 골라 주세요.');
+    if (x.ram >= 16) return S('meh', 'CPU로만 돌아가서 느려요. 답이 천천히 나와요.');
+    return S('no', '메모리가 작아서 어려워요.');
+  }],
+  ['이미지 생성 AI (Stable Diffusion)', '이미지 생성 AI', x => {
+    if (x.mobile) return S('no', '휴대폰 브라우저로는 어려워요.');
+    if (x.nvidia && x.vram >= 8) return S('ok', '이미지 한 장이 몇 초~십여 초면 나와요.');
+    if (x.nvidia) return S('meh', `그래픽 메모리(${x.vram}GB)가 작아서 작은 해상도로만 돌아가요.`);
+    return S('no', 'NVIDIA 그래픽이 없어서 한 장에 몇 분씩 걸려요.');
+  }],
+];
+
+function gameLevel(score) {
+  if (!score) return '판단 어려움';
+  if (score < 800) return '가벼운 2D 게임 정도';
+  if (score < 1600) return '롤·메이플·발로란트 낮음~중간 옵션';
+  if (score < 2400) return '롤·발로란트 중간~높음, 오버워치 낮음';
+  if (score < 4000) return '배그·오버워치 FHD 낮음~중간';
+  if (score < 7000) return '대부분 게임 FHD 중간 옵션';
+  return '최신 게임도 FHD 높음 옵션';
+}
+
+function buildB() {
+  const det = state.det || {};
+  const ex = state.exact;
+  const cpuLabel = ex ? cleanCpu(ex.cpu) : state.cpu;
+  const cpu = cpuLabel ? findCpu(cpuLabel) : null;
+  let gpu = null;
+  const consider = (label, score, kind, vram) => { if (score && (!gpu || score > gpu.score)) gpu = { label, score, kind, vram: vram || 0 }; };
+  if (cpu && cpu.igpuScore) consider(cpu.igpu, cpu.igpuScore, '내장');
+  const names = [det.rendererName, ...(ex ? arr(ex.gpu).map(String) : [])].filter(Boolean);
+  for (const n of names) {
+    const dg = findDgpu(n);
+    if (dg) consider(cleanGpu(n), dg.score, '외장', dg.vram);
+    const ig = IGPU_DB.find(g => g.re.test(n));
+    if (ig) consider(cleanGpu(n), ig.score, '내장');
+  }
+  if (state.gpu) {
+    const dg = findDgpu(state.gpu);
+    if (dg) consider('GeForce ' + state.gpu.replace(' 6GB', '') + ' Laptop', dg.score, '외장', /6GB/.test(state.gpu) ? 6 : dg.vram);
+  }
+  const bench = state.bench, base = A.bench;
+  let single = 0, multi = 0, measured = false;
+  if (bench && base) { single = bench.single / base.single * 1000; multi = bench.multi / base.multi * 1000; measured = true; }
+  else if (cpu) { single = cpu.single / 1700 * 1000; multi = cpu.multi / 10500 * 1000; }
+  const ramGB = ex ? num(ex.ramGB) : (+state.ram || 0);
+  return {
+    cpuLabel, cpu, single, multi, measured,
+    threads: ex ? num(ex.threads) : det.threads,
+    gpu, names,
+    gpuName: det.rendererName ? cleanGpu(det.rendererName) : (cpu && cpu.igpu) || '',
+    ramGB,
+    display: ex && ex.display ? parseDisplay(ex.display) : (det.screen ? { w: det.screen.w, h: det.screen.h, hz: det.hz } : null),
+    npu: cpu ? cpu.npu : (ex ? arr(ex.npu).length > 0 : null),
+    nvidia: !!(gpu && gpu.kind === '외장' && /RTX|GTX|MX/i.test(gpu.label)),
+  };
+}
+function parseDisplay(s) {
+  const m = String(s || '').match(/(\d+)\s*x\s*(\d+)(?:\s+(\d+)\s*Hz)?/i);
+  return m ? { w: +m[1], h: +m[2], hz: +(m[3] || 0) } : null;
+}
+function aObj() {
+  return { single: 1000, multi: 1000, gpu: A.gpu, ramGB: A.ramGB, display: A.display, npu: A.npu, nvidia: false };
+}
+
+function barRow(label, hint, av, bv, v, fmtV = fmt, notes = null, noneText = '아직 측정 전이에요') {
+  const max = Math.max(av, bv) || 1;
+  const line = (cls, who, val) => val
+    ? `<div class="bar-line ${cls}"><span class="who">${who}</span><div class="track"><div class="fill" data-w="${(val / max * 100).toFixed(1)}"></div></div><span class="num">${fmtV(val)}</span></div>`
+    : `<div class="bar-line ${cls}"><span class="who">${who}</span><span class="none">${esc(noneText)}</span></div>`;
+  const noteLines = notes ? `<div class="notes">${[['a', LA, notes[0]], ['b', LB, notes[1]]].map(([c, w, t]) => `<div class="text-line ${c}"><span class="who">${w}</span><span class="t sub">${esc(t)}</span></div>`).join('')}</div>` : '';
+  return `<div class="trow"><div class="label"><b>${label}</b><span>${hint}</span></div><div class="vals">${line('a', LA, av)}${line('b', LB, bv)}${noteLines}</div><div class="verdict">${chip(v)}${v.detail ? `<small>${esc(v.detail)}</small>` : ''}</div></div>`;
+}
+function textRow(label, hint, at, bt, v) {
+  const line = (cls, who, t) => `<div class="text-line ${cls}"><span class="who">${who}</span><span class="t">${esc(t)}</span></div>`;
+  return `<div class="trow"><div class="label"><b>${label}</b><span>${hint}</span></div><div class="vals">${line('a', LA, at)}${line('b', LB, bt)}</div><div class="verdict">${chip(v)}${v.detail ? `<small>${esc(v.detail)}</small>` : ''}</div></div>`;
+}
+
+function renderDeviceB(b) {
+  const det = state.det;
+  const ex = state.exact;
+  $('b-tag').textContent = ex ? '붙여넣은 사양' : det ? '자동 감지' : '자동 감지 중';
+  let name = '이 기기를 확인하는 중이에요';
+  if (ex) name = String(ex.family && !/^\s*$/.test(ex.family) && /lenovo/i.test(ex.model) ? 'Lenovo ' + ex.family : ex.model || '이 노트북').replace(/^ASUSTeK COMPUTER INC\.\s*/i, '');
+  else if (det && det.kind === 'phone') name = det.model && det.model !== 'iPhone' ? `${det.os} 휴대폰 (${det.model})` : det.model === 'iPhone' ? 'iPhone' : `${det.os || ''} 휴대폰`.trim();
+  else if (det && det.kind === 'tablet') name = det.model === 'iPad' ? 'iPad' : `${det.os || ''} 태블릿${det.model ? ` (${det.model})` : ''}`.trim();
+  else if (det) name = (b.nvidia ? 'NVIDIA 그래픽이 있는 ' : '') + (det.os ? det.os + ' ' : '') + '노트북';
+  $('b-name').textContent = name;
+  if (!det) { $('b-specs').innerHTML = ''; return; }
+  const gpuLines = [];
+  if (det.rendererName) gpuLines.push(cleanGpu(det.rendererName) + (isMobile() ? '' : ' (브라우저가 쓰는 그래픽)'));
+  if (det.hp && det.hp.vendor === 'nvidia' && !/NVIDIA/i.test(det.rendererName)) gpuLines.push('NVIDIA ' + (ARCH_NAME[det.hp.arch] || '외장 그래픽') + ' 감지');
+  if (ex) arr(ex.gpu).forEach(n => { if (!gpuLines.some(l => l.includes(cleanGpu(n)))) gpuLines.push(cleanGpu(n)); });
+  const rows = [
+    [isMobile() ? '칩' : 'CPU', (b.cpuLabel || (isMobile() ? '칩 이름은 아래에서 골라 주세요' : 'CPU 모델은 아래에서 골라 주세요')) + (b.threads ? ` · ${b.threads}스레드` : '')],
+    ['메모리', b.ramGB ? b.ramGB + 'GB' + (ex && ex.ramType ? ' ' + ex.ramType : '') + (ex ? '' : ' (직접 고름)') : det.memHint >= 8 ? '8GB 이상 (정확한 값은 아래에서 골라 주세요)' : '아래에서 골라 주세요'],
+    ['그래픽', gpuLines.join('\n') || '확인 못 함'],
+    ['화면', displayText(b) + (det.screen && det.screen.scale !== 100 && !ex ? ` (배율 ${det.screen.scale}%)` : '')],
+    ['저장장치', ex ? arr(ex.disk).join(', ') : '브라우저로는 확인할 수 없어요'],
+    ['운영체제', ex ? String(ex.os || '').replace(/^Microsoft\s+/, '') : (det.os || '확인 못 함')],
+  ];
+  $('b-specs').innerHTML = rows.map(([k, v]) => `<dt>${k}</dt><dd>${esc(v).replace(/\n/g, '<br>')}</dd>`).join('');
+}
+
+function render() {
+  const a = aObj(), b = buildB();
+  renderDeviceB(b);
+  $('same-banner').hidden = !is기준 노트북(state.det) || !!state.exact;
+
+  const mobile = isMobile();
+  const benchNote = b.measured ? '' : b.cpu && b.cpu.multi ? '일반적인 값' : '';
+  const vSingle = compare(a.single, b.single, 0.1);
+  const vMulti = compare(a.multi, b.multi);
+  const vGpu = mobile && !(b.gpu && b.gpu.score) ? { who: 'unk', text: '비교 안 함', detail: '', ratio: 1 } : compare(a.gpu.score, b.gpu && b.gpu.score);
+  const vRam = compare(a.ramGB, b.ramGB, 0.2);
+  let vDisp;
+  if (!b.display || !b.display.w) vDisp = { who: 'unk', text: '판단 어려움', detail: '' };
+  else {
+    const pa = a.display.w * a.display.h, pb = b.display.w * b.display.h;
+    if (pa === pb && (a.display.hz === b.display.hz || !b.display.hz)) vDisp = { who: 'eq', text: '같음', detail: '' };
+    else if (pa === pb) vDisp = a.display.hz > b.display.hz ? { who: 'a', text: LA + ' 우세', detail: '주사율 높음' } : { who: 'b', text: LB + ' 우세', detail: '주사율 높음' };
+    else vDisp = pa > pb ? { who: 'a', text: LA + ' 우세', detail: '해상도 높음' } : { who: 'b', text: LB + ' 우세', detail: '해상도 높음' };
+  }
+  const vNpu = b.npu == null ? { who: 'unk', text: 'CPU를 고르면 보여요', detail: '' }
+    : a.npu === b.npu ? { who: 'eq', text: a.npu ? '둘 다 있음' : '둘 다 없음', detail: '' }
+    : (b.npu ? { who: 'b', text: LB + '만 있음', detail: '' } : { who: 'a', text: LA + '만 있음', detail: '' });
+
+  $('glance').innerHTML = [
+    ['CPU (멀티코어)', vMulti, vMulti.detail || (b.multi ? '' : '측정 중')],
+    ['그래픽 (게임)', vGpu, vGpu.detail || ''],
+    ['메모리', vRam, b.ramGB ? `${a.ramGB}GB vs ${b.ramGB}GB` : '용량을 골라 주세요'],
+    ['화면', vDisp, b.display && b.display.hz ? `${a.display.hz}Hz vs ${b.display.hz}Hz` : ''],
+  ].map(([k, v, d]) => `<div class="glance-item"><span class="k">${k}</span>${chip(v)}<span class="d">${esc(d)}</span></div>`).join('');
+  $('glance-note').textContent = b.measured
+    ? `CPU는 방금 이 노트북에서 잰 값이에요. 마지막 측정: ${new Date(state.bench.at).toLocaleString('ko-KR')}`
+    : b.cpu ? 'CPU는 고른 모델의 일반적인 성능 값으로 비교했어요. 측정이 끝나면 실제 값으로 바뀌어요.'
+    : '측정이 끝나면 CPU 결과가 채워져요.';
+
+  const pts = v => fmt(v) + '점';
+  $('table').innerHTML = [
+    barRow('CPU 싱글코어', '프로그램 반응 속도, 일상 작업', a.single, b.single, vSingle, pts, benchNote ? [`기준 1,000점`, `${b.cpuLabel} ${benchNote}`] : null),
+    barRow('CPU 멀티코어', '여러 작업 동시 처리, 빌드, 영상 인코딩', a.multi, b.multi, vMulti, pts, b.threads ? [`${A.threads}스레드`, `${b.threads}스레드`] : null),
+    barRow('그래픽', '게임, 영상 편집, AI 작업', a.gpu.score, b.gpu ? b.gpu.score : 0, vGpu, fmt, [gpuText(a), gpuText(b)], mobile ? '휴대폰 그래픽은 기준이 달라 점수로 비교하지 않아요' : '그래픽을 확인하지 못했어요'),
+    barRow('메모리', '동시에 띄울 수 있는 프로그램 양', a.ramGB, b.ramGB, vRam, v => v + 'GB', null, '용량을 골라 주세요'),
+    textRow('화면', '해상도와 주사율', displayText(a), displayText(b), vDisp),
+    textRow('AI 가속 (NPU)', 'AI 작업 전용 칩', a.npu ? '있음' : '없음', b.npu == null ? (mobile ? '칩을 고르면 알 수 있어요' : 'CPU 모델을 고르면 알 수 있어요') : b.npu ? '있음' : '없음', vNpu),
+  ].join('');
+  requestAnimationFrame(() => document.querySelectorAll('.fill').forEach(el => { el.style.width = el.dataset.w + '%'; }));
+
+  // 할 수 있는 것 / 어려운 것
+  const xa = { mobile: false, single: a.single, multi: a.multi, gpu: a.gpu.score, nvidia: false, vram: 0, ram: a.ramGB };
+  const xb = { mobile, single: b.single, multi: b.multi, gpu: b.gpu ? b.gpu.score : 0, nvidia: b.nvidia, vram: b.gpu ? b.gpu.vram : 0, ram: b.ramGB };
+  const rows = CAN_DO.map(([t, short, f]) => ({ t, short, b: f(xb), a: f(xa) }));
+  const cnt = s => rows.filter(r => r.b.s === s).length;
+  $('can-title').textContent = `${LB}${ro(LB)} 할 수 있는 것`;
+  const hard = rows.filter(r => r.b.s === 'no').map(r => r.short);
+  $('can-summary-text').textContent = !b.multi ? '측정이 끝나면 모두 채워져요. 오른쪽은 기준 노트북 결과예요.'
+    : hard.length ? `어려운 것: ${hard.join(', ')}. 오른쪽은 기준 노트북 결과예요.`
+    : '어려운 작업이 없어요. 오른쪽은 기준 노트북 결과예요.';
+  $('can-summary').innerHTML = ['ok', 'meh', 'no', 'unk'].filter(s => cnt(s)).map(s => `<span class="pill ${s}">${STATUS[s].short} ${cnt(s)}</span>`).join('');
+  $('can-list').innerHTML = rows.map(r => `
+    <li class="can ${r.b.s}">
+      <span class="mark" aria-hidden="true">${STATUS[r.b.s].mark}</span>
+      <div class="can-body"><b>${esc(r.t)}</b><span class="can-state">${STATUS[r.b.s].label}</span><span class="can-note">${esc(r.b.n)}</span></div>
+      <span class="can-a ${r.a.s}" role="img" aria-label="${LA}: ${STATUS[r.a.s].label}" title="${LA}: ${STATUS[r.a.s].label}"><span class="who-a">${LA}</span><span class="m">${STATUS[r.a.s].mark}</span></span>
+    </li>`).join('');
+
+  // 측정값이 일반적인 값보다 많이 낮으면 알려주기
+  const notes = [];
+  if (b.measured && b.cpu) {
+    const expect = b.cpu.multi / 10500 * 1000;
+    if (b.multi < expect * 0.7) notes.push(`측정값이 ${b.cpuLabel}의 일반적인 성능보다 낮아요. 충전기를 꽂고 성능 모드로 바꾼 뒤 다시 측정해 보세요. LOQ는 Fn + Q로 모드를 바꿀 수 있어요.`);
+  }
+  if (b.measured && mobile && b.multi < 600) {
+    notes.push('휴대폰은 발열을 막으려고 속도를 낮출 때가 있어요. 잠시 식힌 뒤 다시 측정하면 점수가 달라질 수 있어요.');
+  }
+  if (state.onBattery) notes.push('배터리로 측정했어요. 충전기를 꽂으면 점수가 더 높게 나올 수 있어요.');
+  $('bench-notes').innerHTML = notes.map(n => `<li>${esc(n)}</li>`).join('');
+}
+
+// ---------- 선택 칸 ----------
+function fillSelects() {
+  const mobile = isMobile();
+  const kind = KIND[(state.det && state.det.kind) || 'laptop'];
+  if (state.det) { LB = kind.label; $('b-role').textContent = kind.role; }
+  $('cpu-label').textContent = mobile ? kind.cpu : 'CPU 모델';
+  $('gpu-field').hidden = mobile;
+  const cpuSel = $('cpu-pick');
+  const groups = mobile ? MOBILE_CHIPS : LOQ_CPUS;
+  let html = '<option value="">모름 (측정값만 사용)</option>';
+  for (const [group, list] of groups) {
+    html += `<optgroup label="${mobile ? '' : '레노버 LOQ · '}${group}">` + list.map(([n, m]) => `<option value="${esc(n)}">${esc(n)}${m ? ' · ' + esc(m) : ''}</option>`).join('') + '</optgroup>';
+  }
+  const exCpu = state.exact ? cleanCpu(state.exact.cpu) : '';
+  const known = groups.some(([, l]) => l.some(([n]) => n === state.cpu));
+  if (state.cpu && !known) html += `<optgroup label="그 밖의 CPU"><option value="${esc(state.cpu)}">${esc(state.cpu)}</option></optgroup>`;
+  cpuSel.innerHTML = html;
+  cpuSel.value = state.cpu;
+  cpuSel.disabled = !!exCpu;
+
+  const ramSel = $('ram-pick');
+  const rams = mobile ? ['4', '6', '8', '12', '16'] : ['8', '12', '16', '24', '32', '64'];
+  if (state.ram && !rams.includes(state.ram)) rams.push(state.ram);
+  ramSel.innerHTML = '<option value="">모름</option>' + rams.map(r => `<option value="${r}">${r}GB</option>`).join('');
+  ramSel.value = state.ram;
+  ramSel.disabled = !!state.exact;
+
+  const gpuSel = $('gpu-pick');
+  const det = state.det;
+  const arch = det && det.hp && det.hp.vendor === 'nvidia' ? det.hp.arch : '';
+  const cands = ARCH_MAP[arch] || LOQ_GPUS;
+  gpuSel.innerHTML = '<option value="">없음 / 모름</option>' + `<optgroup label="${arch && ARCH_MAP[arch] ? 'NVIDIA ' + ARCH_NAME[arch] : 'NVIDIA (레노버 LOQ)'}">` + cands.map(g => `<option value="${g}">${g}${g.includes('6GB') ? '' : ''}</option>`).join('') + '</optgroup>';
+  if (state.gpu && !cands.includes(state.gpu)) gpuSel.insertAdjacentHTML('beforeend', `<option value="${esc(state.gpu)}">${esc(state.gpu)}</option>`);
+  gpuSel.value = state.gpu;
+  gpuSel.disabled = !!state.gpuAuto;
+
+  const hint = $('input-hint');
+  if (state.exact) { hint.className = 'hint ok'; hint.textContent = '붙여넣은 사양으로 채웠어요.'; }
+  else if (mobile) { hint.className = 'hint'; hint.textContent = '브라우저는 칩 이름과 메모리 용량을 알려주지 않아요. 휴대폰 설정의 휴대전화 정보(iPhone은 일반 → 정보)에서 확인하고 골라 주세요.'; }
+  else if (state.gpuAuto) { hint.className = 'hint'; hint.textContent = `외장 그래픽(${state.gpuAuto})은 자동으로 감지했어요. CPU 모델과 메모리는 브라우저가 알려주지 않아서 직접 골라 주세요.`; }
+  else if (arch) { hint.className = 'hint'; hint.textContent = `NVIDIA ${ARCH_NAME[arch] || '외장 그래픽'}까지 감지했어요. 정확한 모델을 골라 주세요. CPU 모델과 메모리도 직접 골라 주세요.`; }
+  else { hint.className = 'hint'; hint.textContent = '브라우저는 CPU 모델명과 메모리 용량을 알려주지 않아요. 알고 있으면 골라 주세요. 레노버 LOQ는 모두 NVIDIA 외장 그래픽이 있어요.'; }
+}
+$('cpu-pick').addEventListener('change', e => { state.cpu = e.target.value; save(); render(); });
+$('ram-pick').addEventListener('change', e => { state.ram = e.target.value; save(); render(); });
+$('gpu-pick').addEventListener('change', e => { state.gpu = e.target.value; save(); render(); });
+$('rerun').addEventListener('click', runBench);
+
+// ---------- 정확한 사양 붙여넣기 ----------
+function parseSpec(text) {
+  const s = String(text || '');
+  const i = s.indexOf('{'), j = s.lastIndexOf('}');
+  if (i < 0 || j <= i) return null;
+  try {
+    const d = JSON.parse(s.slice(i, j + 1));
+    return d && typeof d === 'object' && d.cpu ? d : null;
+  } catch (e) { return null; }
+}
+function applyExact(d) {
+  state.exact = d;
+  state.cpu = cleanCpu(d.cpu);
+  state.ram = String(Math.round(num(d.ramGB)) || '');
+  const dg = arr(d.gpu).map(String).find(n => findDgpu(n));
+  if (dg) { state.gpu = cleanGpu(dg).replace(/^GeForce\s+/i, '').replace(/\s+Laptop$/i, ''); }
+  save();
+  fillSelects();
+  render();
+  $('clear-exact').hidden = false;
+}
+$('paste').addEventListener('input', e => {
+  const t = e.target.value;
+  const st = $('paste-status');
+  if (!t.trim()) { st.textContent = ''; return; }
+  const d = parseSpec(t);
+  if (!d) { st.className = 'status err'; st.textContent = '결과를 읽지 못했어요. { 로 시작해서 } 로 끝나는 줄 전체를 붙여넣었는지 확인해 주세요.'; return; }
+  applyExact(d);
+  st.className = 'status ok';
+  st.textContent = '읽었어요. 위의 사양 칸과 비교 결과에 반영했어요.';
+});
+$('clear-exact').addEventListener('click', () => {
+  state.exact = null; state.cpu = ''; state.ram = ''; state.gpu = state.gpuAuto || '';
+  save(); fillSelects(); render();
+  $('paste').value = '';
+  $('clear-exact').hidden = true;
+  $('paste-status').className = 'status';
+  $('paste-status').textContent = '붙여넣은 사양을 지웠어요.';
+});
+$('copy-btn').addEventListener('click', () => {
+  const el = $('cmd');
+  const st = $('copy-status');
+  const fallback = () => {
+    const r = document.createRange(); r.selectNodeContents(el);
+    const sel = getSelection(); sel.removeAllRanges(); sel.addRange(r);
+    st.className = 'status err'; st.textContent = '자동 복사가 막혀 있어요. 선택된 명령어를 Ctrl + C로 복사해 주세요.';
+  };
+  if (!navigator.clipboard || !navigator.clipboard.writeText) { fallback(); return; }
+  navigator.clipboard.writeText(el.textContent.trim()).then(() => { st.className = 'status ok'; st.textContent = '복사했어요. PowerShell에 붙여넣으세요.'; }).catch(fallback);
+});
+
+// ---------- 다른 사람들과 비교 (Supabase 점수판) ----------
+const LB_REF_KEY = '11e594f481958c10e3015d0bf0447a22f068a8a647f475df15ce2c7ab4b8f3f1'; // 기준 기기(기준 노트북) device_key
+const lb = { kind: 'all', myKey: '', rows: null, stats: null, failed: false, busy: false };
+function deviceId() {
+  try {
+    let id = localStorage.getItem('spec-compare-device-id');
+    if (!id) { id = crypto.randomUUID(); localStorage.setItem('spec-compare-device-id', id); }
+    return id;
+  } catch (e) {
+    if (!lb.tempId) lb.tempId = crypto.randomUUID();
+    return lb.tempId;
+  }
+}
+// 목록에서 내 기기를 강조할 때 쓰는 값. DB의 device_key와 같은 방식(sha256 hex)이에요
+async function deviceKey() {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(deviceId()));
+  return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, '0')).join('');
+}
+async function sb(path, opts = {}) {
+  const res = await fetch(`${LEADERBOARD.url}/rest/v1/${path}`, {
+    ...opts,
+    headers: { apikey: LEADERBOARD.key, 'Content-Type': 'application/json', ...(opts.headers || {}) },
+  });
+  if (!res.ok) throw new Error(`${res.status} ${await res.text()}`);
+  return res.status === 204 || res.status === 201 ? null : res.json();
+}
+function browserName() {
+  const uad = navigator.userAgentData;
+  const brand = uad && uad.brands && uad.brands.find(b => /Edge|Chrome|Opera|Whale|Samsung/i.test(b.brand) && !/Chromium/i.test(b.brand));
+  if (brand) return `${brand.brand.replace(/^Microsoft\s+|^Google\s+/, '')} ${brand.version}`.slice(0, 40);
+  const ua = navigator.userAgent;
+  const m = ua.match(/(Firefox|Edg|SamsungBrowser|Whale|CriOS|Chrome)\/(\d+)/);
+  if (m) return `${{ Edg: 'Edge', CriOS: 'Chrome', SamsungBrowser: 'Samsung Internet' }[m[1]] || m[1]} ${m[2]}`;
+  return /Safari/.test(ua) ? 'Safari' : '';
+}
+const lbGroup = () => isMobile() ? 'mobile' : 'laptop';
+const KIND_TEXT = { laptop: '노트북', phone: '휴대폰', tablet: '태블릿' };
+// 지금 측정값의 순위. 아직 안 올렸으면 이 기기를 한 대 더해서 세요
+function lbRank(below, total) {
+  const mine = lbUploaded() ? 0 : 1;
+  const count = total + mine;
+  const rank = Math.max(1, Math.min(count, total - below + mine));
+  return { count, rank, pct: Math.max(1, Math.round(rank / count * 100)) };
+}
+
+async function lbRefresh() {
+  if (!LEADERBOARD.url || !LEADERBOARD.key) return;
+  const b = buildB();
+  const kind = lb.kind === 'all' ? null : lb.kind;
+  const filter = kind === 'laptop' ? '&kind=eq.laptop' : kind === 'mobile' ? '&kind=in.(phone,tablet)' : '';
+  try {
+    const [rows, stats] = await Promise.all([
+      sb(`latest_scores?select=device_key,nickname,kind,cpu,gpu,threads,single_pts,multi_pts,created_at&bench_version=eq.${BENCH_VERSION}&order=multi_pts.desc,created_at.asc&limit=20${filter}`),
+      b.measured ? sb('rpc/score_stats', { method: 'POST', body: JSON.stringify({ p_multi: Math.round(b.multi), p_single: Math.round(b.single), p_kind: kind }) }) : null,
+    ]);
+    lb.rows = rows; lb.stats = stats; lb.failed = false;
+  } catch (e) {
+    lb.failed = true;
+  }
+  lbRender();
+}
+function lbRender() {
+  const b = buildB();
+  document.querySelectorAll('.lb-filters button').forEach(el => el.setAttribute('aria-pressed', String(el.dataset.kind === lb.kind)));
+  const sum = $('lb-summary');
+  if (lb.failed) {
+    sum.textContent = '점수판에 연결하지 못했어요. 잠시 후 다시 열어 주세요.';
+    $('lb-table').innerHTML = '';
+  } else if (lb.rows) {
+    const s = lb.stats;
+    const m = s && s.total ? lbRank(s.below_multi, s.total) : null;
+    const sg = s && s.total ? lbRank(s.below_single, s.total) : null;
+    sum.textContent = !lb.rows.length ? '아직 올라온 기록이 없어요. 첫 번째로 올려 보세요.'
+      : !b.measured ? '측정이 끝나면 내 기기가 몇 위쯤인지 알려드려요.'
+      : m ? `${lbUploaded() ? '' : '이 기기를 포함해 '}측정한 기기 ${fmt(m.count)}대 중 ${LB}${eun(LB)} 멀티코어 ${fmt(m.rank)}위(상위 ${m.pct}%), 싱글코어 ${fmt(sg.rank)}위(상위 ${sg.pct}%)예요.`
+      : '아직 올라온 기록이 없어요. 첫 번째로 올려 보세요.';
+    const head = '<div class="lb-row head"><span>순위</span><span>닉네임</span><span class="kind">기기</span><span class="cpu">CPU</span><span class="n">멀티</span><span class="n single">싱글</span></div>';
+    $('lb-table').innerHTML = lb.rows.length ? head + lb.rows.map((r, i) => {
+      const cls = [r.device_key === lb.myKey ? 'me' : '', r.device_key === LB_REF_KEY ? 'ref' : ''].join(' ');
+      const nick = r.nickname || '익명';
+      const cpu = r.cpu || (r.threads ? `${r.threads}스레드` : '');
+      return `<div class="lb-row ${cls}"${r.device_key === lb.myKey ? ' aria-label="내 기기"' : ''}>
+        <span class="rank">${i + 1}</span>
+        <span class="nick"><span class="nm">${esc(nick)}</span><span class="sub-line">${esc([KIND_TEXT[r.kind], cpu, '싱글 ' + fmt(r.single_pts)].filter(Boolean).join(' · '))}</span></span>
+        <span class="kind">${esc(KIND_TEXT[r.kind] || '')}</span>
+        <span class="cpu" title="${esc(cpu)}">${esc(cpu || '–')}</span>
+        <span class="n">${fmt(r.multi_pts)}</span>
+        <span class="n single">${fmt(r.single_pts)}</span>
+      </div>`;
+    }).join('') : '';
+  }
+  const btn = $('lb-upload');
+  btn.disabled = lb.busy || running || !b.measured;
+  const st = $('lb-status');
+  if (!lb.busy && !st.dataset.sticky) {
+    st.className = 'status';
+    st.textContent = !b.measured ? '측정이 끝나면 점수를 올릴 수 있어요.'
+      : lbUploaded() ? '이 기기는 마지막으로 올린 점수만 순위에 쓰여요.' : '';
+  }
+}
+function lbUploaded() { try { return !!localStorage.getItem('spec-compare-uploaded'); } catch (e) { return false; } }
+async function uploadScore(nickname) {
+  const b = buildB();
+  const gpu = b.gpu ? b.gpu.label : (b.gpuName || '');
+  const row = {
+    device_id: deviceId(),
+    nickname: nickname.trim().slice(0, 20) || null,
+    kind: (state.det && state.det.kind) || 'laptop',
+    os: ((state.det && state.det.os) || '').slice(0, 40) || null,
+    cpu: (b.cpuLabel || '').slice(0, 60) || null,
+    gpu: gpu.slice(0, 80) || null,
+    threads: state.bench.threads,
+    ram_gb: b.ramGB || null,
+    single_pts: Math.round(b.single),
+    multi_pts: Math.round(b.multi),
+    gpu_pts: b.gpu ? b.gpu.score : null,
+    single_raw: state.bench.single,
+    multi_raw: state.bench.multi,
+    bench_version: BENCH_VERSION,
+    browser: browserName() || null,
+  };
+  await sb('scores', { method: 'POST', headers: { Prefer: 'return=minimal' }, body: JSON.stringify(row) });
+}
+async function lbInit() {
+  if (!LEADERBOARD.url || !LEADERBOARD.key) return;
+  $('lb').hidden = false;
+  lb.kind = lbGroup();
+  try { lb.myKey = await deviceKey(); } catch (e) {}
+  document.querySelectorAll('.lb-filters button').forEach(el => el.addEventListener('click', () => {
+    if (lb.kind === el.dataset.kind) return;
+    lb.kind = el.dataset.kind;
+    lbRender();
+    lbRefresh();
+  }));
+  $('lb-upload').addEventListener('click', async () => {
+    const st = $('lb-status');
+    lb.busy = true; delete st.dataset.sticky; lbRender();
+    st.className = 'status'; st.textContent = '올리는 중이에요.';
+    try {
+      await uploadScore($('lb-nick').value);
+      try { localStorage.setItem('spec-compare-uploaded', String(Date.now())); } catch (e) {}
+      st.className = 'status ok'; st.textContent = '올렸어요. 순위에 반영했어요.';
+    } catch (e) {
+      const msg = String(e.message || '');
+      st.className = 'status err';
+      st.textContent = /too many submissions/.test(msg) ? '잠시 후 다시 올려 주세요. 한 기기에서 1시간에 5번까지 올릴 수 있어요.'
+        : /23514|check constraint/.test(msg) ? '점수가 정상 범위를 벗어나서 올리지 못했어요. 다시 측정해 주세요.'
+        : '점수판에 연결하지 못했어요. 잠시 후 다시 올려 주세요.';
+    }
+    st.dataset.sticky = '1';
+    lb.busy = false;
+    await lbRefresh();
+  });
+  lbRender();
+  await lbRefresh();
+}
+
+// ---------- 시작 ----------
+(async function start() {
+  load();
+  fillSelects();
+  render();
+  if (state.exact) $('clear-exact').hidden = false;
+  state.det = await detect();
+  // 브라우저가 NVIDIA 그래픽 이름을 그대로 알려주면 자동으로 채워요
+  const dg = state.det.rendererName && findDgpu(state.det.rendererName);
+  if (dg) {
+    const m = state.det.rendererName.match(/(RTX|GTX|MX)\s*\d{3,4}(\s*Ti)?/i);
+    state.gpuAuto = m ? m[0].replace(/\s+/g, ' ').toUpperCase().replace('TI', 'Ti') : cleanGpu(state.det.rendererName);
+    if (!state.exact) state.gpu = state.gpuAuto;
+  } else if (!state.gpu && state.det.hp && ARCH_MAP[state.det.hp.arch] && state.det.hp.vendor === 'nvidia') {
+    state.gpu = ARCH_MAP[state.det.hp.arch][0];
+  }
+  // 개인 노트북(LOQ)은 16GB라고 알려줘서 기본값으로 둬요. 휴대폰은 브라우저가 8GB 미만일 때만 정확한 값을 알려줘요
+  if (!state.ram && !state.exact) {
+    if (is기준 노트북(state.det)) state.ram = '32';
+    else if (state.det.kind !== 'laptop') state.ram = state.det.memHint && state.det.memHint < 8 ? String(state.det.memHint) : '';
+    else state.ram = '16';
+  }
+  try {
+    if (navigator.getBattery) { const bat = await withTimeout(navigator.getBattery(), 800); if (bat && !bat.charging) state.onBattery = true; }
+  } catch (e) {}
+  fillSelects();
+  render();
+  lbInit();
+  runBench();
+})();
+</script>
