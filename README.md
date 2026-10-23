@@ -19,7 +19,7 @@
 
 ## ✨ 이런 걸 해요
 
-| | |
+| 기능 | 설명 |
 |---|---|
 | ⚡ **6초 자동 측정** | 페이지를 열면 기기를 확인하고 CPU 싱글코어·멀티코어 성능을 바로 재요. 설치도 로그인도 없어요. |
 | 🏆 **다른 사람들과 순위** | 점수를 올리면 "N대 중 M위(상위 X%)"와 상위 20개 목록을 보여줘요. 노트북 / 휴대폰·태블릿 순위를 따로 볼 수 있어요. |
@@ -70,15 +70,18 @@
 빌드 도구 없이 HTML 파일 하나로 동작해요. 서버는 Supabase의 REST API만 써요.
 
 ```mermaid
-flowchart LR
+flowchart TB
+  GH["GitHub Pages<br/>정적 호스팅"] --> P
   subgraph Browser["사용자 브라우저"]
-    P["index.html<br/>감지 · 측정 · 비교"] --> W["Web Worker × 스레드 수<br/>CPU 측정"]
-    P --> L[("localStorage<br/>측정값 · 닉네임")]
+    P["index.html<br/>감지 · 측정 · 비교"]
+    W["Web Worker × 스레드 수<br/>CPU 측정"]
+    L[("localStorage<br/>측정값 · 닉네임")]
+    P --> W
+    P --> L
   end
-  P -- "점수 올리기 (insert)" --> S[("Supabase<br/>scores 표")]
-  S -- "latest_scores 뷰 · score_stats 함수" --> P
-  GA["GitHub Actions<br/>3일마다"] -- "읽기 1번" --> S
-  GH["GitHub Pages"] -- "정적 호스팅" --> P
+  P -- "점수 올리기" --> S[("Supabase<br/>scores 표")]
+  S -- "순위 · 상위 20개" --> P
+  GA["GitHub Actions<br/>3일마다 읽기"] --> S
 ```
 
 | 파일 | 내용 |
