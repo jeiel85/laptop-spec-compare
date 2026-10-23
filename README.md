@@ -17,6 +17,7 @@
 | `spec-compare.html` | 페이지 원본. 수정은 여기서 해요 (Claude 아티팩트로도 게시돼 있어요) |
 | `build.ps1` | 원본으로 `index.html`을 만들고, 이 폴더를 `laptop-spec-compare.zip`으로 묶어요 |
 | `index.html`, `.nojekyll` | 빌드 결과. GitHub Pages가 보여주는 페이지예요. 직접 고치지 않아요 |
+| `og-image.png`, `assets/og-card.html` | 링크 미리보기 이미지(1200×630)와 그 원본 |
 | `docs/leaderboard-design.md` | 다른 사람들과 점수를 비교하는 기능(Supabase) 설계서 |
 | `supabase/migrations/` | 점수판 DB에 적용한 SQL (표, 권한, 뷰, 함수, 기준 기기) |
 | `.github/workflows/supabase-keepalive.yml` | 3일마다 점수판을 한 번 읽어서 Supabase 무료 프로젝트가 일시정지되지 않게 해요 |
@@ -40,6 +41,14 @@ powershell -ExecutionPolicy Bypass -File .\build.ps1
 5. 1~2분 뒤 `https://<GitHub 아이디>.github.io/laptop-spec-compare/`에서 열려요.
 
 공개 저장소와 Pages는 누구나 볼 수 있어요. 페이지에는 기준 노트북의 CPU, 메모리 용량, 그래픽, 화면 사양이 들어 있어요(모델명은 넣지 않아요).
+
+## 미리보기 이미지
+
+Threads·카카오톡 등에 링크를 붙이면 `og-image.png`가 보여요. `assets/og-card.html`을 고친 뒤 이 폴더에서 다시 만들어요.
+
+```
+& 'C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe' --headless=new --disable-gpu --hide-scrollbars --force-device-scale-factor=1 --window-size=1200,630 --virtual-time-budget=8000 --screenshot="$PWD\og-image.png" "file:///$($PWD -replace '\\','/')/assets/og-card.html"
+```
 
 ## 점수판 (Supabase)
 
