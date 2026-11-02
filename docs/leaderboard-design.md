@@ -55,7 +55,7 @@
  2. "내 점수 올리기" 누름  ── POST /rest/v1/scores ──▶  scores 표 (추가만 허용)
  3. 순위·목록 보기          ◀─ GET  /rest/v1/latest_scores ─  기기별 최신 점수 뷰
                             ◀─ POST /rest/v1/rpc/score_stats ─ 상위 % 계산 함수
-[GitHub Actions] 3일마다    ── GET  /rest/v1/latest_scores ──▶  일시정지 방지
+[GitHub Actions] 매일      ── POST /rest/v1/rpc/keepalive_ping ─▶ 일시정지 방지
 ```
 
 ---
@@ -322,7 +322,9 @@ const rows = await sb(`latest_scores?select=device_key,nickname,kind,cpu,gpu,thr
 
 ## 7. 일시정지 방지 (GitHub Actions)
 
-Supabase 무료 프로젝트는 1주일 동안 DB 활동이 없으면 일시정지돼요. 3일마다 DB를 한 번 읽어서 깨워 둬요.
+Supabase 무료 프로젝트는 1주일 동안 DB 활동이 없으면 일시정지돼요. 매일 한 번 `keepalive` 행을 갱신해서 깨워 둬요.
+
+처음에는 3일마다 `latest_scores`를 한 줄 읽기만 했는데, 핑이 성공하고 있었는데도 2026-10-31 전에 프로젝트가 정지됐어요. 읽기만으로는 활동으로 치지 않는 것으로 보고, 실제로 쓰는 방식으로 바꿨어요. 함수는 [`20261102000000_keepalive_heartbeat.sql`](../supabase/migrations/20261102000000_keepalive_heartbeat.sql)에 있어요.
 
 `.github/workflows/supabase-keepalive.yml`
 
@@ -331,23 +333,24 @@ name: Supabase keep-alive
 
 on:
   schedule:
-    - cron: '0 0 */3 * *'   # 3일마다 UTC 0시 (한국 시간 9시)
-  workflow_dispatch:         # Actions 탭에서 직접 실행
+    - cron: '0 0 * * *'   # 매일 UTC 0시 (한국 시간 9시). 예약 실행이 가끔 빠져도 7일 안에 여러 번 닿게 해요
+  workflow_dispatch:       # Actions 탭에서 직접 실행
 
 jobs:
   ping:
     runs-on: ubuntu-latest
     steps:
-      - name: Read one row
+      # 읽기만 해서는 일시정지를 막지 못했어요. 함수로 행 하나를 실제로 갱신해요
+      - name: Write heartbeat
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
         run: |
-          curl -sf "$SUPABASE_URL/rest/v1/latest_scores?select=id&limit=1" \
-            -H "apikey: $SUPABASE_KEY" -o /dev/null
-          echo "ok"
+          curl -sSf -X POST "$SUPABASE_URL/rest/v1/rpc/keepalive_ping"             -H "apikey: $SUPABASE_KEY"             -H "Content-Type: application/json"             -d '{}'
+          echo
 ```
 
+- 마지막 핑 시각은 `select * from keepalive;`로 확인해요.
 - 저장소 **Settings → Secrets and variables → Actions**에 `SUPABASE_URL`, `SUPABASE_KEY`(공개용 키)를 넣어요.
 - GitHub는 공개 저장소에서 60일 동안 커밋이 없으면 예약 실행을 멈춰요. 멈추면 메일이 오니 Actions 탭에서 다시 켜거나, 가끔 커밋하면 돼요.
 - 그래도 일시정지되면 Supabase 대시보드에서 프로젝트를 다시 켜요(Restore). 데이터는 남아 있어요.
