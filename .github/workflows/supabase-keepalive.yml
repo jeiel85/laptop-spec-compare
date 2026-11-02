@@ -2,18 +2,21 @@ name: Supabase keep-alive
 
 on:
   schedule:
-    - cron: '0 0 */3 * *'   # 3일마다 UTC 0시 (한국 시간 9시)
-  workflow_dispatch:         # Actions 탭에서 직접 실행
+    - cron: '0 0 * * *'   # 매일 UTC 0시 (한국 시간 9시). 예약 실행이 가끔 빠져도 7일 안에 여러 번 닿게 해요
+  workflow_dispatch:       # Actions 탭에서 직접 실행
 
 jobs:
   ping:
     runs-on: ubuntu-latest
     steps:
-      - name: Read one row
+      # 읽기만 해서는 일시정지를 막지 못했어요. 함수로 행 하나를 실제로 갱신해요
+      - name: Write heartbeat
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
         run: |
-          curl -sf "$SUPABASE_URL/rest/v1/latest_scores?select=id&limit=1" \
-            -H "apikey: $SUPABASE_KEY" -o /dev/null
-          echo "ok"
+          curl -sSf -X POST "$SUPABASE_URL/rest/v1/rpc/keepalive_ping" \
+            -H "apikey: $SUPABASE_KEY" \
+            -H "Content-Type: application/json" \
+            -d '{}'
+          echo
