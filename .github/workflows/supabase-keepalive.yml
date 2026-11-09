@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Restore if paused, then write heartbeat
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
