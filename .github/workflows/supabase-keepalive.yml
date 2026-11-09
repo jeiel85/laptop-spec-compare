@@ -2,21 +2,23 @@ name: Supabase keep-alive
 
 on:
   schedule:
-    - cron: '0 0 * * *'   # 매일 UTC 0시 (한국 시간 9시). 예약 실행이 가끔 빠져도 7일 안에 여러 번 닿게 해요
+    # 6시간마다 (UTC 0·6·12·18시). 핑만으로는 정지를 못 막는 경우가 있어, 정지되면 늦어도 몇 시간 안에 복구하려고 자주 돌려요
+    - cron: '0 */6 * * *'
   workflow_dispatch:       # Actions 탭에서 직접 실행
+
+concurrency:
+  group: supabase-keepalive
+  cancel-in-progress: false
 
 jobs:
   ping:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
-      # 읽기만 해서는 일시정지를 막지 못했어요. 함수로 행 하나를 실제로 갱신해요
-      - name: Write heartbeat
+      - uses: actions/checkout@v4
+      - name: Restore if paused, then write heartbeat
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
-        run: |
-          curl -sSf -X POST "$SUPABASE_URL/rest/v1/rpc/keepalive_ping" \
-            -H "apikey: $SUPABASE_KEY" \
-            -H "Content-Type: application/json" \
-            -d '{}'
-          echo
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        run: bash .github/scripts/supabase-keepalive.sh
