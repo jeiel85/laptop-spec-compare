@@ -90,7 +90,7 @@ flowchart TB
 | [`build.ps1`](build.ps1) | 원본으로 `index.html`을 만들어요 (로컬에선 프로젝트 zip도 만들어요) |
 | `index.html`, `.nojekyll` | 빌드 결과. GitHub Pages가 보여주는 페이지예요. 직접 고치지 않아요 |
 | [`supabase/migrations/`](supabase/migrations) | 점수판 DB에 적용한 SQL (표, 권한, 뷰, 함수, 횟수 제한, 기준 행) |
-| [`.github/workflows/supabase-keepalive.yml`](.github/workflows/supabase-keepalive.yml) | 무료 Supabase 프로젝트가 일시정지되지 않게 매일 heartbeat 행을 갱신해요 |
+| [`.github/workflows/supabase-keepalive.yml`](.github/workflows/supabase-keepalive.yml) | 6시간마다 Supabase 프로젝트 상태를 보고, 일시정지됐으면 자동 복구한 뒤 heartbeat 행을 갱신해요 (스크립트: [`.github/scripts/supabase-keepalive.sh`](.github/scripts/supabase-keepalive.sh)) |
 | `og-image.png`, [`assets/og-card.html`](assets/og-card.html) | 링크 미리보기 이미지(1200×630)와 그 원본 |
 | [`docs/leaderboard-design.md`](docs/leaderboard-design.md) | 점수판 설계서 |
 
@@ -120,10 +120,11 @@ powershell -ExecutionPolicy Bypass -File .\build.ps1
 - 프로젝트: `laptop-spec-compare` (ref `ijemtaegzsecsqqcgeza`, 서울 리전, Free 플랜)
 - 페이지의 `LEADERBOARD`에는 **공개용 키(`sb_publishable_...`)만** 넣어요. `service_role`·`sb_secret_...` 키는 절대 넣지 않아요.
 - 이상한 점수 지우기: Supabase 대시보드 → Table Editor → `scores` → 행 선택 → Delete
-- 일주일 넘게 활동이 없으면 프로젝트가 일시정지돼요. keep-alive 워크플로가 이걸 막아요.
+- 일주일 넘게 활동이 없으면 프로젝트가 일시정지돼요. keep-alive 워크플로가 핑을 보내고, 그래도 정지되면 자동으로 복구해요.
   - 읽기만 하는 핑으로는 막지 못해 2026-10-31에 정지된 적이 있어요. 그래서 `keepalive_ping()` 함수로 `keepalive` 행을 실제로 갱신해요.
   - 공개 저장소에 60일 동안 커밋이 없으면 GitHub가 예약 실행을 꺼요. 메일이 오면 **Actions → Supabase keep-alive → Enable workflow**를 눌러요.
-  - 이미 일시정지됐으면 대시보드에서 **Restore**를 눌러요. 일시정지된 채로 90일이 넘으면 대시보드에서 바로 복구할 수 없어요.
+  - 매일 쓰기 핑을 보내도 2026-11-09에 다시 정지 경고가 왔어요. 핑만으로는 Supabase의 활동 기준을 못 채울 수 있어서, 정지되면 Management API로 복구를 요청하고 켜질 때까지 기다려요(최대 20분).
+  - 자동 복구가 실패하면 대시보드에서 **Restore**를 눌러요. 일시정지된 채로 90일이 넘으면 대시보드에서 바로 복구할 수 없어요.
 - 측정 코드(`WORKER_SRC`)나 측정 순서를 바꾸면 `BENCH_VERSION`을 올리고, DB 정책과 `score_stats`의 `bench_version` 조건도 새 마이그레이션으로 같이 바꿔요.
 
 </details>
@@ -141,7 +142,7 @@ powershell -ExecutionPolicy Bypass -File .\build.ps1
 1. 이 저장소를 포크해요.
 2. **Settings → Pages**에서 Source를 **Deploy from a branch**, Branch를 **main / (root)**로 고르고 Save를 눌러요.
 3. 점수판을 따로 쓰려면 Supabase 프로젝트를 만들고 `supabase/migrations/`의 SQL을 순서대로 실행한 뒤, `spec-compare.html`의 `LEADERBOARD`에 내 URL과 공개용 키를 넣고 다시 빌드해요. 비워 두면 점수판 섹션이 숨겨져요.
-4. keep-alive를 쓰려면 **Settings → Secrets and variables → Actions**에 `SUPABASE_URL`, `SUPABASE_KEY`(공개용 키)를 넣어요.
+4. keep-alive를 쓰려면 **Settings → Secrets and variables → Actions**에 `SUPABASE_URL`, `SUPABASE_KEY`(공개용 키), `SUPABASE_ACCESS_TOKEN`(Supabase 대시보드 **Account → Access Tokens**에서 만든 개인 액세스 토큰, 자동 복구용)을 넣어요.
 
 </details>
 
